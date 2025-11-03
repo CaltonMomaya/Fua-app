@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register Page</title>
+  <link rel="stylesheet" href="style.css">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+  <!-- Add container for split layout -->
+  <div class="container">
+    <!-- Left side with background image -->
+    <div class="left-side"></div>
+    
+    <!-- Right side with form -->
+    <div class="wrapper">
+      <form action="">
+        <h1>Register</h1>
+
+        <!-- Username -->
+        <div class="input-box">
+          <input type="text" placeholder="Input Username" required>
+          <i class='bx bx-user'></i>
+        </div>
+
+        <!-- Password -->
+        <div class="input-box">
+          <input type="password" placeholder="Input Password" required>
+          <i class='bx bx-lock'></i>
+        </div>
+
+        <!-- Phone Number -->
+        <div class="input-box">
+          <input type="number" placeholder="Input Phone Number" required>
+          <i class='bx bx-phone'></i>
+        </div>
+
+        <!-- Gender -->
+        <div class="input-box gender-box">
+          <label>
+            <input type="radio" name="gender" value="male" required> Male
+          </label>
+          <label>
+            <input type="radio" name="gender" value="female" required> Female
+          </label>
+        </div>
+
+        <!-- Email -->
+        <div class="input-box">
+          <input type="email" placeholder="Input Email Address" 
+                 pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+          <i class='bx bx-envelope-open'></i>
+        </div>
+
+        <!-- Date of Birth -->
+        <div class="input-box">
+          <label>Select Date of Birth:</label>
+          <input type="date" required>
+          <i class='bx bx-calendar-alt'></i>
+        </div>
+        <div class="floating-clothes">
+    <div class="clothing-item tshirt"></div>
+    <div class="clothing-item pants"></div>
+    <div class="clothing-item sock"></div>
+    <div class="clothing-item dress"></div>
+    <div class="clothing-item hat"></div>
+    <div class="clothing-item scarf"></div>
+</div>
+
+        <!-- Remember Me & Login link -->
+        <div class="remember-forgot">
+          <label><input type="checkbox"> Remember me</label>
+          <a href="##">Already have an account?</a>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="button">Register</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
