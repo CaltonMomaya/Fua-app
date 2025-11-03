@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register Page</title>
+  <title>Fua app</title>
   <link rel="stylesheet" href="style.css">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
@@ -16,7 +16,8 @@
     <!-- Right side with form -->
     <div class="wrapper">
       <form action="">
-        <h1>Register</h1>
+        <h1>Welcome to Fua Konnect</h1> 
+        
 
         <!-- Username -->
         <div class="input-box">
@@ -34,6 +35,16 @@
         <div class="input-box">
           <input type="number" placeholder="Input Phone Number" required>
           <i class='bx bx-phone'></i>
+        </div>
+
+        <!-- Register As Dropdown -->
+        <div class="input-box">
+          <select class="register-select" required>
+            <option value="" disabled selected>Register as</option>
+            <option value="mama-fua">Mama Fua</option>
+            <option value="client">Client</option>
+          </select>
+          <i class='bx bx-user-plus'></i>
         </div>
 
         <!-- Gender -->
@@ -59,19 +70,20 @@
           <input type="date" required>
           <i class='bx bx-calendar-alt'></i>
         </div>
+
         <div class="floating-clothes">
-    <div class="clothing-item tshirt"></div>
-    <div class="clothing-item pants"></div>
-    <div class="clothing-item sock"></div>
-    <div class="clothing-item dress"></div>
-    <div class="clothing-item hat"></div>
-    <div class="clothing-item scarf"></div>
-</div>
+          <div class="clothing-item tshirt"></div>
+          <div class="clothing-item pants"></div>
+          <div class="clothing-item sock"></div>
+          <div class="clothing-item dress"></div>
+          <div class="clothing-item hat"></div>
+          <div class="clothing-item scarf"></div>
+        </div>
 
         <!-- Remember Me & Login link -->
         <div class="remember-forgot">
           <label><input type="checkbox"> Remember me</label>
-          <a href="##">Already have an account?</a>
+          <a href="mainlog.html">Already have an account Login?</a>
         </div>
 
         <!-- Submit Button -->

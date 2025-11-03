@@ -1,469 +1,284 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Poppins", sans-serif;
+/* ===== Global Reset ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
 }
 
-/* Split screen layout */
+/* ===== Layout ===== */
 .container {
-    display: flex;
-    min-height: 100vh;
-    position: relative;
-    overflow: hidden;
+  display: flex;
+  min-height: 100vh;
+  overflow: hidden;
 }
 
-/* Left section with background image - now 55% of screen */
+/* ===== Left Side (Blue Gradient with Overlay Text) ===== */
 .left-side {
-    flex: 5.5;
-    background: url('https://cdn.pixabay.com/photo/2023/09/28/15/59/clothes-pins-8281931_1280.jpg') no-repeat center center;
-    background-size: cover;
-    min-height: 100vh;
-    border-radius: 0 15px 15px 0;
-    position: relative;
-    z-index: 1;
+  flex: 1.2;
+  background: linear-gradient(to bottom right, #007bff, #00bfff);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
 }
 
-/* Right form section - now 45% of screen */
+.left-side::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("https://cdn.pixabay.com/photo/2023/09/28/15/59/clothes-pins-8281931_1280.jpg")
+    no-repeat center center / cover;
+  opacity: 0.25;
+}
+
+.left-overlay {
+  position: relative;
+  text-align: center;
+  padding: 2rem;
+  z-index: 2;
+}
+
+.left-overlay h1 {
+  font-size: 2.3rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.left-overlay p {
+  font-size: 1rem;
+  opacity: 0.9;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+/* ===== Right Side (White Form Area) ===== */
 .wrapper {
-    flex: 4.5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: rgba(60, 0, 100, 0.8);
-    color: #fff;
-    border-radius: 15px 0 0 15px;
-    padding: 40px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(8px);
-    min-height: 100vh;
-    margin-left: -20px;
-    position: relative;
-    z-index: 2;
-    overflow: hidden;
+  flex: 1;
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Crazy Clothing Animations Background */
+/* Soft animated blue glow */
 .wrapper::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: 
-        /* Floating T-shirts */
-        radial-gradient(circle at 20% 30%, rgba(255, 105, 180, 0.3) 2%, transparent 5%),
-        radial-gradient(circle at 80% 70%, rgba(135, 206, 250, 0.3) 3%, transparent 6%),
-        radial-gradient(circle at 40% 80%, rgba(255, 255, 0, 0.3) 1%, transparent 4%),
-        
-        /* Clothing patterns */
-        repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(176, 95, 255, 0.1) 10px, rgba(176, 95, 255, 0.1) 20px),
-        repeating-linear-gradient(-45deg, transparent, transparent 15px, rgba(255, 105, 180, 0.1) 15px, rgba(255, 105, 180, 0.1) 25px);
-    animation: fabricFlow 20s linear infinite;
-    z-index: -1;
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(0, 123, 255, 0.07) 0%, transparent 70%);
+  animation: softGlow 20s linear infinite;
+  z-index: 0;
 }
 
-/* Animated floating clothing items */
-.floating-clothes {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: -1;
+@keyframes softGlow {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(20px, 30px); }
+  100% { transform: translate(0, 0); }
 }
 
-.clothing-item {
-    position: absolute;
-    opacity: 0.4;
-    filter: blur(1px);
-    animation-duration: 15s;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
+/* ===== Form ===== */
+form {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  padding: 2.5rem;
+  position: relative;
+  z-index: 2;
 }
 
-/* T-shirt animation */
-.tshirt {
-    width: 60px;
-    height: 60px;
-    background: radial-gradient(circle, #ff69b4, #ff1493);
-    clip-path: polygon(25% 0%, 75% 0%, 100% 25%, 100% 75%, 75% 100%, 25% 100%, 0% 75%, 0% 25%);
-    animation-name: floatTshirt;
-    top: 10%;
-    left: 10%;
+form h1 {
+  text-align: center;
+  font-size: 1.9rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 2rem;
 }
 
-/* Pants animation */
-.pants {
-    width: 40px;
-    height: 80px;
-    background: linear-gradient(45deg, #00bfff, #1e90ff);
-    clip-path: polygon(0% 0%, 100% 0%, 80% 40%, 80% 100%, 20% 100%, 20% 40%);
-    animation-name: floatPants;
-    top: 70%;
-    left: 80%;
-}
-
-/* Sock animation */
-.sock {
-    width: 30px;
-    height: 50px;
-    background: linear-gradient(#ffff00, #ffd700);
-    border-radius: 15px 15px 5px 5px;
-    animation-name: floatSock;
-    top: 30%;
-    left: 85%;
-}
-
-/* Dress animation */
-.dress {
-    width: 50px;
-    height: 80px;
-    background: linear-gradient(#ff1493, #dc143c);
-    clip-path: polygon(0% 0%, 100% 0%, 85% 100%, 15% 100%);
-    animation-name: floatDress;
-    top: 60%;
-    left: 15%;
-}
-
-/* Hat animation */
-.hat {
-    width: 70px;
-    height: 40px;
-    background: linear-gradient(#32cd32, #228b22);
-    border-radius: 50% 50% 0 0;
-    animation-name: floatHat;
-    top: 20%;
-    left: 70%;
-}
-
-/* Scarf animation */
-.scarf {
-    width: 80px;
-    height: 10px;
-    background: linear-gradient(90deg, #ff4500, #ff8c00);
-    border-radius: 5px;
-    animation-name: floatScarf;
-    top: 50%;
-    left: 5%;
-}
-
-/* Keyframe animations */
-@keyframes fabricFlow {
-    0% {
-        background-position: 0 0, 0 0, 0 0;
-    }
-    100% {
-        background-position: 100px 100px, -200px 150px, 150px -100px;
-    }
-}
-
-@keyframes floatTshirt {
-    0%, 100% {
-        transform: translate(0, 0) rotate(0deg);
-    }
-    25% {
-        transform: translate(100px, 50px) rotate(90deg);
-    }
-    50% {
-        transform: translate(50px, 100px) rotate(180deg);
-    }
-    75% {
-        transform: translate(-50px, 75px) rotate(270deg);
-    }
-}
-
-@keyframes floatPants {
-    0%, 100% {
-        transform: translate(0, 0) rotate(0deg) scale(1);
-    }
-    33% {
-        transform: translate(-80px, 60px) rotate(120deg) scale(1.2);
-    }
-    66% {
-        transform: translate(60px, -40px) rotate(240deg) scale(0.8);
-    }
-}
-
-@keyframes floatSock {
-    0%, 100% {
-        transform: translateY(0) rotate(0deg);
-    }
-    25% {
-        transform: translateY(-40px) rotate(45deg);
-    }
-    50% {
-        transform: translateY(-20px) rotate(-45deg);
-    }
-    75% {
-        transform: translateY(-60px) rotate(90deg);
-    }
-}
-
-@keyframes floatDress {
-    0%, 100% {
-        transform: translate(0, 0) skew(0deg);
-    }
-    50% {
-        transform: translate(60px, 30px) skew(10deg);
-    }
-}
-
-@keyframes floatHat {
-    0%, 100% {
-        transform: translate(0, 0) rotate(0deg);
-    }
-    25% {
-        transform: translate(50px, -30px) rotate(45deg);
-    }
-    50% {
-        transform: translate(-30px, 20px) rotate(-45deg);
-    }
-    75% {
-        transform: translate(-20px, -40px) rotate(90deg);
-    }
-}
-
-@keyframes floatScarf {
-    0%, 100% {
-        transform: translateX(0) scaleX(1);
-    }
-    50% {
-        transform: translateX(100px) scaleX(1.5);
-    }
-}
-
-/* Pulsing glow effect */
-@keyframes pulseGlow {
-    0%, 100% {
-        box-shadow: 0 0 20px rgba(176, 95, 255, 0.3);
-    }
-    50% {
-        box-shadow: 0 0 40px rgba(176, 95, 255, 0.6),
-                   0 0 60px rgba(255, 105, 180, 0.4);
-    }
-}
-
-.wrapper {
-    animation: pulseGlow 4s ease-in-out infinite;
-}
-
-/* Form styling */
-.wrapper form {
-    width: 100%;
-    max-width: 420px;
-    position: relative;
-    z-index: 3;
-}
-
-/* Input boxes */
+/* ===== Input Box with Icon ===== */
 .input-box {
-    position: relative;
-    width: 100%;
-    height: 60px;
-    margin-bottom: 30px;
+  position: relative;
+  margin-bottom: 1.5rem;
 }
 
-.input-box input {
-    width: 100%;
-    height: 100%;
-    padding: 0 50px 0 20px;
-    font-size: 18px;
-    border: none;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.2);
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(5px);
-}
-
-.input-box input::placeholder {
-    color: #e5e5e5;
-    font-size: 18px;
-}
-
-.input-box input:focus {
-    outline: none;
-    border-color: #b05fff;
-    box-shadow: 0 0 15px rgba(176, 95, 255, 0.7);
-    animation: inputFocus 0.3s ease;
-}
-
-@keyframes inputFocus {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.02);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
+/* Icons positioning */
 .input-box i {
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #fff;
-    font-size: 28px;
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  font-size: 1.3rem;
+  color: #007bff;
+  pointer-events: none;
+  z-index: 3;
 }
 
-/* Gender radio buttons */
+/* Ensure icons are visible and properly positioned */
+.bx-user, .bx-lock, .bx-phone, .bx-user-plus, .bx-envelope-open, .bx-calendar-alt {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.input-box input, 
+.input-box select {
+  width: 100%;
+  padding: 0.8rem 45px 0.8rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #dcdde1;
+  border-radius: 8px;
+  outline: none;
+  color: #333;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.input-box input:focus,
+.input-box select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+/* ===== Gender Radio Buttons Fix ===== */
 .gender-box {
-    display: flex;
-    gap: 20px;
-    font-size: 18px;
-    margin-bottom: 30px;
-    align-items: center;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 0.8rem 0;
 }
 
 .gender-box label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: transform 0.3s ease;
-}
-
-.gender-box label:hover {
-    transform: translateY(-2px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #333;
 }
 
 .gender-box input[type="radio"] {
-    width: 18px;
-    height: 18px;
-    transition: all 0.3s ease;
+  width: 18px;
+  height: 18px;
+  accent-color: #007bff;
+  cursor: pointer;
+  margin: 0;
 }
 
-/* Date of Birth specific styling */
+/* ===== Date of Birth Specific Styling ===== */
 .input-box:has(input[type="date"]) {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .input-box:has(input[type="date"]) label {
-    margin-bottom: 8px;
-    font-size: 16px;
-    color: #e5e5e5;
+  margin-bottom: 8px;
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
 }
 
 .input-box:has(.bx-calendar-alt) i {
-    top: 70%;
+  top: 70%;
 }
 
-/* Remember me & link */
+/* ===== Register As Dropdown Specific Styling ===== */
+.register-select {
+  appearance: none;
+  cursor: pointer;
+}
+
+.register-select option {
+  background: #fff;
+  color: #333;
+  padding: 10px;
+}
+
+/* ===== Remember Me & Login link ===== */
 .remember-forgot {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-    font-size: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  color: #555;
 }
 
 .remember-forgot label {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.remember-forgot label input {
-    accent-color: #fff;
-    margin-right: 8px;
+.remember-forgot input[type="checkbox"] {
+  accent-color: #007bff;
 }
 
 .remember-forgot a {
-    color: #f7b601;
-    text-decoration: none;
-    font-weight: 600;
-    transition: 0.3s;
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
 }
 
 .remember-forgot a:hover {
-    color: #ffffff;
-    text-shadow: 0 0 10px #fff;
+  text-decoration: underline;
 }
 
-/* Button */
+/* ===== Button ===== */
 .button {
-    width: 100%;
-    height: 50px;
-    background: linear-gradient(135deg, #8a2be2, #b05fff);
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 19px;
-    font-weight: 600;
-    color: #fff;
-    transition: 0.3s;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    position: relative;
-    overflow: hidden;
-}
-
-.button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: 0.5s;
-}
-
-.button:hover::before {
-    left: 100%;
+  width: 100%;
+  padding: 0.9rem;
+  background: linear-gradient(135deg, #007bff, #00bfff);
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  position: relative;
+  z-index: 2;
 }
 
 .button:hover {
-    background: linear-gradient(135deg, #ab4dff, #c084fc);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(176, 95, 255, 0.6);
+  background: linear-gradient(135deg, #0056b3, #0099e6);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
-    .container {
-        flex-direction: column;
-    }
-    
-    .left-side {
-        flex: 1;
-        min-height: 40vh;
-        border-radius: 0 0 15px 15px;
-    }
-    
-    .wrapper {
-        flex: 2;
-        border-radius: 15px 15px 0 0;
-        margin-left: 0;
-        margin-top: -15px;
-    }
-    
-    /* Reduce animation intensity on mobile */
-    .clothing-item {
-        opacity: 0.2;
-        transform: scale(0.7);
-    }
-}
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+  }
 
-/* Header styling */
-.wrapper h1 {
-    text-align: center;
-    margin-bottom: 40px;
-    font-size: 36px;
-    font-weight: 700;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    animation: titleGlow 3s ease-in-out infinite alternate;
-}
+  .left-side {
+    flex: none;
+    height: 40vh;
+  }
 
-@keyframes titleGlow {
-    from {
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    }
-    to {
-        text-shadow: 0 2px 20px rgba(176, 95, 255, 0.6),
-                     0 2px 30px rgba(255, 105, 180, 0.4);
-    }
+  .wrapper {
+    padding: 2rem;
+  }
+
+  form {
+    box-shadow: none;
+    padding: 2rem 1.5rem;
+  }
+  
+  .gender-box {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
 }
