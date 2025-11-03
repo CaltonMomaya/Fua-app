@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fua Konnect - Dashboard</title>
+    <link rel="stylesheet" href="clientdash.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Hamburger Menu -->
+    <div class="nav-menu" id="navMenu">
+        <div class="menu-header">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-details">
+                    <h3>Username</h3>
+                    <p>+254 712 345 678</p>
+                </div>
+            </div>
+            <button class="close-btn" id="closeMenu">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="menu-items">
+            <div class="menu-section">
+                <h4>PAYMENTS</h4>
+                <div class="menu-item">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>M-Pesa</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Card</span>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <h4>ACCOUNT</h4>
+                <div class="menu-item">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Personal Info</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Privacy</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-lock"></i>
+                    <span>Login & Security</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-language"></i>
+                    <span>Language</span>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <h4>SUPPORT</h4>
+                <div class="menu-item">
+                    <i class="fas fa-info-circle"></i>
+                    <span>About</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-headset"></i>
+                    <span>Support</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Safety</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-list-alt"></i>
+                    <span>My Requests</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-gift"></i>
+                    <span>Promotions</span>
+                </div>
+            </div>
+            
+            <div class="menu-item logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div class="dashboard-container">
+        <!-- Top Header -->
+        <header class="dashboard-header">
+            <button class="menu-btn" id="menuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="header-title">
+                <h1>Fua Konnect</h1>
+            </div>
+            <div class="header-actions">
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Home Screen (Default) -->
+            <div class="screen home-screen active" id="homeScreen">
+                <div class="location-section">
+                    <div class="current-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span id="currentLocation">Fetching your location...</span>
+                    </div>
+                </div>
+
+                <div class="map-container" id="map"></div>
+
+                <div class="request-section">
+                    <div class="request-card">
+                        <h3>Request Mama Fua</h3>
+                        <p>Get your laundry done professionally</p>
+                        <button class="request-btn" id="requestBtn">
+                            Request Now
+                        </button>
+                    </div>
+                </div>
+
+                <div class="promo-section">
+                    <div class="promo-card">
+                        <div class="promo-content">
+                            <h4>50% OFF</h4>
+                            <p>First time user discount</p>
+                            <span class="promo-code">FUAFIRST50</span>
+                        </div>
+                        <div class="promo-icon">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Requests Screen -->
+            <div class="screen requests-screen" id="requestsScreen">
+                <div class="requests-header">
+                    <h2>My Requests</h2>
+                </div>
+                
+                <div class="requests-tabs">
+                    <button class="tab-btn active" data-tab="upcoming">Upcoming</button>
+                    <button class="tab-btn" data-tab="past">Past</button>
+                </div>
+
+                <div class="requests-content">
+                    <!-- Upcoming Requests -->
+                    <div class="tab-content active" id="upcomingTab">
+                        <div class="empty-state" id="upcomingEmpty">
+                            <i class="fas fa-calendar-plus"></i>
+                            <h3>No Upcoming Requests</h3>
+                            <p>You don't have any scheduled washes</p>
+                        </div>
+                        <div class="requests-list" id="upcomingList"></div>
+                    </div>
+
+                    <!-- Past Requests -->
+                    <div class="tab-content" id="pastTab">
+                        <div class="empty-state" id="pastEmpty">
+                            <i class="fas fa-history"></i>
+                            <h3>No Past Requests</h3>
+                            <p>Your completed washes will appear here</p>
+                        </div>
+                        <div class="requests-list" id="pastList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Screen -->
+            <div class="screen account-screen" id="accountScreen">
+                <div class="account-header">
+                    <div class="user-profile">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="profile-info">
+                            <h2>John Doe</h2>
+                            <p>+254 712 345 678</p>
+                            <span class="rating">
+                                <i class="fas fa-star"></i>
+                                4.8
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="account-options">
+                    <div class="option-item">
+                        <i class="fas fa-user-edit"></i>
+                        <span>Personal Info</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="option-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Privacy</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="option-item">
+                        <i class="fas fa-lock"></i>
+                        <span>Login & Security</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="option-item">
+                        <i class="fas fa-language"></i>
+                        <span>Language</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="option-item logout-option">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Package Selection Screen -->
+            <div class="screen package-screen" id="packageScreen">
+                <div class="package-header">
+                    <button class="back-btn" id="packageBackBtn">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h2>Select Service</h2>
+                </div>
+
+                <div class="packages-list">
+                    <div class="package-card" data-price="2000">
+                        <div class="package-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <div class="package-details">
+                            <h3>Full House Cleaning</h3>
+                            <p>Complete house cleaning including clothes, utensils, and ironing</p>
+                            <span class="package-price">KSh 3,000</span>
+                        </div>
+                        <div class="package-select">
+                            <i class='bx  bx-fork-spoon'    ></i> 
+                        </div>
+                    </div>
+
+                    <div class="package-card" data-price="1000">
+                        <div class="package-icon">
+                            <i class="fas fa-tshirt"></i>
+                        </div>
+                        <div class="package-details">
+                            <h3>Clothes Only</h3>
+                            <p>Washing, drying, of clothes only</p>
+                            <span class="package-price">KSh 1,500</span>
+                        </div>
+                        <div class="package-select">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+
+                    <div class="package-card" data-price="1500">
+                        <div class="package-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <div class="package-details">
+                            <h3>Utensils Only</h3>
+                            <p>Washing and organizing kitchen utensils</p>
+                            <span class="package-price">KSh 500</span>
+                        </div>
+                        <div class="package-select">
+                            
+                        </div>
+                    </div>
+
+                    <div class="package-card" data-price="1200">
+                        <div class="package-icon">
+                            <i class="fas fa-broom"></i>
+                        </div>
+                        <div class="package-details">
+                            <h3>House Only</h3>
+                            <p>General house cleaning and organizing</p>
+                            <span class="package-price">KSh 1,000</span>
+                        </div>
+                        <div class="package-select">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mama Fua Search Screen -->
+            <div class="screen search-screen" id="searchScreen">
+                <div class="search-header">
+                    <button class="back-btn" id="searchBackBtn">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h2>Finding Mama Fua</h2>
+                </div>
+
+                <div class="search-content">
+                    <div class="search-animation">
+                        <div class="pulse-ring"></div>
+                        <div class="pulse-ring delay-1"></div>
+                        <div class="pulse-ring delay-2"></div>
+                        <div class="search-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                    </div>
+
+                    <div class="search-status">
+                        <h3>Searching for nearby Mama Fua...</h3>
+                        <p>We're looking for available service providers in your area</p>
+                    </div>
+
+                    <div class="mama-fua-results" id="mamaFuaResults">
+                        <!-- Results will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mama Fua Tracking Screen -->
+            <div class="screen tracking-screen" id="trackingScreen">
+                <div class="tracking-header">
+                    <button class="back-btn" id="trackingBackBtn">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h2>Mama Fua is Coming</h2>
+                </div>
+
+                <div class="tracking-content">
+                    <div class="mama-fua-info">
+                        <div class="mama-fua-avatar-large">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 id="trackingMamaFuaName">Sarah Wanjiku</h3>
+                        <div class="mama-fua-rating">
+                            <i class="fas fa-star"></i> 4.8 • 127 reviews
+                        </div>
+                        <div class="vehicle-info">
+                            <i class="fas fa-motorcycle"></i>
+                            <span>Motorcycle • KSH 2,000</span>
+                        </div>
+                    </div>
+
+                    <div class="tracking-map-container" id="trackingMap"></div>
+
+                    <div class="tracking-details">
+                        <div class="time-estimate">
+                            <i class="fas fa-clock"></i>
+                            <span>Estimated arrival: <strong id="eta">5-7 minutes</strong></span>
+                        </div>
+                        <div class="distance-info">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Distance: <strong id="distance">1.2 km</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="tracking-actions">
+                        <button class="action-btn call-btn">
+                            <i class="fas fa-phone"></i>
+                            Call Mama Fua
+                        </button>
+                        <button class="action-btn message-btn">
+                            <i class="fas fa-comment"></i>
+                            Message
+                        </button>
+                    </div>
+
+                    <div class="safety-tips">
+                        <h4>Safety Tips</h4>
+                        <ul>
+                            <li>Verify the Mama Fua's identity upon arrival</li>
+                            <li>Keep your valuables secure</li>
+                            <li>Meet in a well-lit, public area</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-screen="homeScreen">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </button>
+            <button class="nav-item" data-screen="requestsScreen">
+                <i class="fas fa-list-alt"></i>
+                <span>Requests</span>
+            </button>
+            <button class="nav-item" data-screen="accountScreen">
+                <i class="fas fa-user"></i>
+                <span>Account</span>
+            </button>
+        </nav>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="clientdash.js"></script>
+</body>
+</html>

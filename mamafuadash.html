@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mama Fua - Dashboard</title>
+    <link rel="stylesheet" href="mamafuadash.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="mama-fua-header">
+        <div class="header-left">
+            <div class="online-status">
+                <div class="status-indicator online" id="statusIndicator"></div>
+                <span id="statusText">Online</span>
+            </div>
+        </div>
+        <div class="header-center">
+            <h1>Your Dashboard</h1>
+        </div>
+        <div class="header-right">
+            <button class="header-btn" id="notificationsBtn">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </button>
+            <button class="header-btn" id="menuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <div class="mama-fua-profile">
+                <div class="profile-avatar">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="profile-info">
+                    <h3>Sarah Wanjiku</h3>
+                    <p>Professional Laundry Service</p>
+                    <div class="rating">
+                        <i class="fas fa-star"></i> 4.8 (127 reviews)
+                    </div>
+                </div>
+            </div>
+            <button class="close-btn" id="closeMenu">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="menu-items">
+            <div class="menu-section">
+                <h4>EARNINGS</h4>
+                <div class="earnings-display">
+                    <div class="earning-item">
+                        <span class="earning-label">Today</span>
+                        <span class="earning-amount">KSh 2,500</span>
+                    </div>
+                    <div class="earning-item">
+                        <span class="earning-label">This Week</span>
+                        <span class="earning-amount">KSh 12,800</span>
+                    </div>
+                    <div class="earning-item">
+                        <span class="earning-label">Rating</span>
+                        <span class="earning-amount">4.8 ★</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <h4>ACCOUNT</h4>
+                <div class="menu-item" data-screen="profileScreen">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Profile</span>
+                </div>
+                <div class="menu-item active" data-screen="walletScreen">
+                    <i class="fas fa-wallet"></i>
+                    <span>Wallet</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Performance</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <h4>SERVICES</h4>
+                <div class="menu-item">
+                    <i class="fas fa-tshirt"></i>
+                    <span>Service Areas</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-clock"></i>
+                    <span>Working Hours</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Pricing</span>
+                </div>
+            </div>
+            
+            <div class="menu-item logout" id="goOfflineBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Go Offline</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <main class="mama-fua-main">
+        <!-- Online Screen -->
+        <div class="screen online-screen active" id="onlineScreen">
+            <div class="map-container" id="map">
+                <div class="map-placeholder">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <p>Service Area Map</p>
+                </div>
+            </div>
+            
+            <div class="request-panel">
+                <div class="panel-header">
+                    <h3>Ready for Requests</h3>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="onlineToggle" checked>
+                        <label for="onlineToggle" class="toggle-label"></label>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-bell"></i>
+                        <div class="stat-info">
+                            <span class="stat-number">5</span>
+                            <span class="stat-label">Today</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-star"></i>
+                        <div class="stat-info">
+                            <span class="stat-number">4.8</span>
+                            <span class="stat-label">Rating</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <div class="stat-info">
+                            <span class="stat-number">2.5K</span>
+                            <span class="stat-label">Earnings</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quick-actions">
+                    <button class="action-btn" id="viewRequestsBtn">
+                        <i class="fas fa-list"></i>
+                        View Requests
+                    </button>
+                    <button class="action-btn" id="earningsBtn">
+                        <i class="fas fa-chart-bar"></i>
+                        Earnings
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wallet Screen -->
+        <div class="screen wallet-screen" id="walletScreen">
+            <div class="wallet-header">
+                <button class="back-btn" id="walletBackBtn">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2>My Wallet</h2>
+            </div>
+            
+            <div class="wallet-content">
+                <!-- Credit Card -->
+                <div class="credit-card">
+                    <div class="card-header">
+                        <div class="card-type">Mama Fua Wallet</div>
+                        <div class="card-chip"></div>
+                    </div>
+                    <div class="card-balance">
+                        <div class="balance-label">Available Balance</div>
+                        <div class="balance-amount">KSh 12,800</div>
+                    </div>
+                    <div class="card-number">
+                        <span>●</span>
+                        <span>●</span>
+                        <span>●</span>
+                        <span>●</span>
+                        <span>●</span>
+                        <span>●</span>
+                        <span>●</span>
+                        <span>●</span>
+                        <span>1</span>
+                        <span>2</span>
+                        <span>3</span>
+                        <span>4</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-holder">
+                            <div class="card-label">CARD HOLDER</div>
+                            <div>SARAH WANJIKU</div>
+                        </div>
+                        <div class="expiry-date">
+                            <div class="card-label">VALID THRU</div>
+                            <div>12/25</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wallet Actions -->
+                <div class="wallet-actions">
+                    <button class="action-btn" id="addMoneyBtn">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Add Money</span>
+                    </button>
+                    <button class="action-btn" id="withdrawBtn">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Withdraw</span>
+                    </button>
+                    <button class="action-btn" id="transactionsBtn">
+                        <i class="fas fa-history"></i>
+                        <span>Transactions</span>
+                    </button>
+                    <button class="action-btn" id="helpBtn">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Help</span>
+                    </button>
+                </div>
+
+                <!-- Withdrawal Section -->
+                <div class="withdrawal-section">
+                    <h2 class="section-title">Withdraw to M-Pesa</h2>
+                    <div class="withdrawal-form">
+                        <div class="form-group">
+                            <label for="phoneNumber">M-Pesa Phone Number</label>
+                            <input type="tel" id="phoneNumber" placeholder="07XX XXX XXX" maxlength="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="amount">Amount (KSh)</label>
+                            <input type="number" id="amount" placeholder="Enter amount" min="100" max="12800">
+                        </div>
+                        
+                        <div class="commission-info">
+                            <i class="fas fa-info-circle"></i>
+                            <div>
+                                <strong>Service Fee:</strong> 2.5% will be deducted from your withdrawal
+                            </div>
+                        </div>
+                        
+                        <button class="withdraw-btn" id="withdrawSubmit">Withdraw Now</button>
+                    </div>
+                </div>
+
+                <!-- Transaction History -->
+                <div class="transaction-history">
+                    <h2 class="section-title">Recent Transactions</h2>
+                    <div class="transaction-list">
+                        <div class="transaction-item">
+                            <div class="transaction-info">
+                                <div class="transaction-icon earning">
+                                    <i class="fas fa-hand-holding-usd"></i>
+                                </div>
+                                <div class="transaction-details">
+                                    <h4>Service Payment</h4>
+                                    <p>Today, 10:30 AM</p>
+                                </div>
+                            </div>
+                            <div class="transaction-amount positive">+ KSh 2,000</div>
+                        </div>
+                        <div class="transaction-item">
+                            <div class="transaction-info">
+                                <div class="transaction-icon withdrawal">
+                                    <i class="fas fa-mobile-alt"></i>
+                                </div>
+                                <div class="transaction-details">
+                                    <h4>M-Pesa Withdrawal</h4>
+                                    <p>Yesterday, 4:15 PM</p>
+                                </div>
+                            </div>
+                            <div class="transaction-amount negative">- KSh 3,000</div>
+                        </div>
+                        <div class="transaction-item">
+                            <div class="transaction-info">
+                                <div class="transaction-icon earning">
+                                    <i class="fas fa-hand-holding-usd"></i>
+                                </div>
+                                <div class="transaction-details">
+                                    <h4>Service Payment</h4>
+                                    <p>2 days ago, 2:45 PM</p>
+                                </div>
+                            </div>
+                            <div class="transaction-amount positive">+ KSh 1,500</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Screen -->
+        <div class="screen profile-screen" id="profileScreen">
+            <div class="profile-header">
+                <button class="back-btn" id="profileBackBtn">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2>My Profile</h2>
+            </div>
+            
+            <div class="profile-content">
+                <div class="profile-card">
+                    <div class="profile-avatar-large">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="profile-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Full Name</span>
+                            <span class="detail-value">Sarah Wanjiku</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Phone Number</span>
+                            <span class="detail-value">+254 712 345 678</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Email</span>
+                            <span class="detail-value">sarah.w@mamafua.com</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Service Area</span>
+                            <span class="detail-value">Westlands, Nairobi</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Rating</span>
+                            <span class="detail-value">4.8 ★ (127 reviews)</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Member Since</span>
+                            <span class="detail-value">January 2023</span>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-actions">
+                        <button class="btn btn-primary" id="editProfileBtn">
+                            <i class="fas fa-edit"></i>
+                            Edit Profile
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Request Received Screen -->
+        <div class="screen request-screen" id="requestScreen">
+            <div class="request-header">
+                <button class="back-btn" id="requestBackBtn">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2>New Service Request</h2>
+            </div>
+            
+            <div class="request-details">
+                <div class="client-info">
+                    <div class="client-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="client-details">
+                        <h3 id="clientName">John Doe</h3>
+                        <div class="client-rating">
+                            <i class="fas fa-star"></i> 4.5 • 15 reviews
+                        </div>
+                        <div class="client-distance">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span id="clientDistance">1.2 km away</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="service-details">
+                    <h4>Service Requested</h4>
+                    <div class="service-item">
+                        <i class="fas fa-home" id="serviceIcon"></i>
+                        <div class="service-info">
+                            <span class="service-type" id="serviceType">Full House Cleaning</span>
+                            <span class="service-price" id="servicePrice">KSh 2,000</span>
+                        </div>
+                    </div>
+                    
+                    <div class="service-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Est. 3-4 hours</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>ASAP</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="client-location">
+                    <h4>Location</h4>
+                    <p id="clientAddress">Westlands, Nairobi</p>
+                    <div class="location-map" id="requestMap">
+                        <div class="map-placeholder">
+                            <i class="fas fa-map"></i>
+                            <p>Client Location</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="request-actions">
+                    <button class="btn decline-btn" id="declineBtn">
+                        <i class="fas fa-times"></i>
+                        Decline
+                    </button>
+                    <button class="btn accept-btn" id="acceptBtn">
+                        <i class="fas fa-check"></i>
+                        Accept Request
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- On the Way Screen -->
+        <div class="screen onway-screen" id="onwayScreen">
+            <div class="onway-header">
+                <button class="back-btn" id="onwayBackBtn">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2>Headed to Client</h2>
+            </div>
+            
+            <div class="onway-content">
+                <div class="client-info-card">
+                    <div class="client-avatar-large">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="client-info">
+                        <h3 id="onwayClientName">John Doe</h3>
+                        <div class="service-badge" id="onwayServiceType">Full House</div>
+                        <div class="earning-amount">KSh 2,000</div>
+                    </div>
+                </div>
+                
+                <div class="navigation-map" id="navigationMap">
+                    <div class="map-placeholder">
+                        <i class="fas fa-map"></i>
+                        <p>Navigation Map</p>
+                    </div>
+                </div>
+                
+                <div class="trip-info">
+                    <div class="info-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <span class="info-label">ETA</span>
+                            <span class="info-value" id="etaTime">15 min</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-walking"></i>
+                        <div>
+                            <span class="info-label">Distance</span>
+                            <span class="info-value" id="tripDistance">1.2 km</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <span class="info-label">Address</span>
+                            <span class="info-value" id="onwayAddress">Westlands, Nairobi</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn call-btn" id="callClientBtn">
+                        <i class="fas fa-phone"></i>
+                        Call Client
+                    </button>
+                    <button class="btn message-btn" id="messageClientBtn">
+                        <i class="fas fa-comment"></i>
+                        Message
+                    </button>
+                </div>
+                
+                <button class="btn arrived-btn" id="arrivedBtn">
+                    <i class="fas fa-check-circle"></i>
+                    I've Arrived
+                </button>
+            </div>
+        </div>
+
+        <!-- Active Service Screen -->
+        <div class="screen service-screen" id="serviceScreen">
+            <div class="service-header">
+                <h2>Active Service</h2>
+                <div class="service-timer" id="serviceTimer">00:00</div>
+            </div>
+            
+            <div class="service-content">
+                <div class="service-progress">
+                    <div class="progress-steps">
+                        <div class="step active">
+                            <div class="step-icon">
+                                <i class="fas fa-walking"></i>
+                            </div>
+                            <span>Arrived</span>
+                        </div>
+                        <div class="step" id="serviceStep">
+                            <div class="step-icon">
+                                <i class="fas fa-hands"></i>
+                            </div>
+                            <span>In Progress</span>
+                        </div>
+                        <div class="step">
+                            <div class="step-icon">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <span>Completed</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="service-details-card">
+                    <h4>Service Details</h4>
+                    <div class="detail-item">
+                        <i class="fas fa-user"></i>
+                        <span id="serviceClientName">John Doe</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-home"></i>
+                        <span id="serviceServiceType">Full House Cleaning</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>KSh 2,000</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span id="serviceAddress">Westlands, Nairobi</span>
+                    </div>
+                </div>
+                
+                <div class="service-actions">
+                    <button class="btn pause-btn" id="pauseServiceBtn">
+                        <i class="fas fa-pause"></i>
+                        Take Break
+                    </button>
+                    <button class="btn complete-btn" id="completeServiceBtn">
+                        <i class="fas fa-check-circle"></i>
+                        Mark Complete
+                    </button>
+                </div>
+                
+                <div class="notes-section">
+                    <h4>Service Notes</h4>
+                    <textarea placeholder="Add any notes about the service..." id="serviceNotes"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings Screen -->
+        <div class="screen earnings-screen" id="earningsScreen">
+            <div class="earnings-header">
+                <button class="back-btn" id="earningsBackBtn">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2>My Earnings</h2>
+            </div>
+            
+            <div class="earnings-content">
+                <div class="earnings-summary">
+                    <div class="total-earnings">
+                        <span class="amount">KSh 12,800</span>
+                        <span class="label">This Week</span>
+                    </div>
+                    <div class="earnings-stats">
+                        <div class="stat">
+                            <span class="value">18</span>
+                            <span class="label">Services</span>
+                        </div>
+                        <div class="stat">
+                            <span class="value">4.8</span>
+                            <span class="label">Rating</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="earnings-chart">
+                    <div class="chart-placeholder">
+                        <i class="fas fa-chart-line"></i>
+                        <p>Earnings Chart</p>
+                    </div>
+                </div>
+                
+                <div class="recent-earnings">
+                    <h4>Recent Services</h4>
+                    <div class="earnings-list">
+                        <div class="earning-item">
+                            <div class="earning-info">
+                                <span class="earning-client">Grace Mwangi</span>
+                                <span class="earning-service">Clothes Only</span>
+                            </div>
+                            <div class="earning-amount">KSh 1,000</div>
+                        </div>
+                        <div class="earning-item">
+                            <div class="earning-info">
+                                <span class="earning-client">David Kimani</span>
+                                <span class="earning-service">Full House</span>
+                            </div>
+                            <div class="earning-amount">KSh 2,000</div>
+                        </div>
+                        <div class="earning-item">
+                            <div class="earning-info">
+                                <span class="earning-client">Mary Wambui</span>
+                                <span class="earning-service">Utensils Only</span>
+                            </div>
+                            <div class="earning-amount">KSh 1,500</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="mama-fua-nav">
+        <button class="nav-item active" data-screen="onlineScreen">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </button>
+        <button class="nav-item" data-screen="earningsScreen">
+            <i class="fas fa-chart-bar"></i>
+            <span>Earnings</span>
+        </button>
+        <button class="nav-item" data-screen="walletScreen">
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
+        </button>
+        <button class="nav-item" data-screen="profileScreen">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </button>
+    </nav>
+
+    <!-- Notification Badge -->
+    <div class="floating-request-badge" id="floatingRequest">
+        <div class="request-pulse"></div>
+        <i class="fas fa-bell"></i>
+    </div>
+
+    <!-- Withdrawal Confirmation Modal -->
+    <div class="modal" id="withdrawalModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Confirm Withdrawal</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>You are about to withdraw <strong id="confirmAmount">KSh 0</strong> to M-Pesa number <strong id="confirmPhone">07XX XXX XXX</strong>.</p>
+                <p>Service fee: <strong id="confirmFee">KSh 0</strong></p>
+                <p>You will receive: <strong id="confirmNet">KSh 0</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelWithdrawal">Cancel</button>
+                <button class="btn btn-primary" id="confirmWithdrawal">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Withdrawal Successful</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; margin: 20px 0;">
+                    <i class="fas fa-check-circle" style="font-size: 48px; color: #27ae60;"></i>
+                </div>
+                <p>Your withdrawal of <strong id="successAmount">KSh 0</strong> has been processed successfully.</p>
+                <p>The funds should appear in your M-Pesa account shortly.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="closeSuccess">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="mamafuadash.js"></script>
+</body>
+</html>

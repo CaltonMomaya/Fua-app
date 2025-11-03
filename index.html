@@ -1,45 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fua app</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fua app - Register</title>
+  <link rel="stylesheet" href="style.css" />
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
-  <!-- Add container for split layout -->
   <div class="container">
-    <!-- Left side with background image -->
     <div class="left-side"></div>
-    
-    <!-- Right side with form -->
     <div class="wrapper">
-      <form action="">
-        <h1>Welcome to Fua Konnect</h1> 
-        
+      <form id="registerForm">
+        <h1>Welcome to Fua Konnect</h1>
 
-        <!-- Username -->
         <div class="input-box">
-          <input type="text" placeholder="Input Username" required>
+          <input type="text" id="username" placeholder="Input Username" required>
           <i class='bx bx-user'></i>
         </div>
 
-        <!-- Password -->
         <div class="input-box">
-          <input type="password" placeholder="Input Password" required>
+          <input type="password" id="password" placeholder="Input Password" required>
           <i class='bx bx-lock'></i>
         </div>
 
-        <!-- Phone Number -->
         <div class="input-box">
-          <input type="number" placeholder="Input Phone Number" required>
+          <input type="tel" id="phone" placeholder="Input Phone Number" required>
           <i class='bx bx-phone'></i>
         </div>
 
-        <!-- Register As Dropdown -->
         <div class="input-box">
-          <select class="register-select" required>
+          <select class="register-select" id="userType" required>
             <option value="" disabled selected>Register as</option>
             <option value="mama-fua">Mama Fua</option>
             <option value="client">Client</option>
@@ -47,49 +38,109 @@
           <i class='bx bx-user-plus'></i>
         </div>
 
-        <!-- Gender -->
         <div class="input-box gender-box">
-          <label>
-            <input type="radio" name="gender" value="male" required> Male
-          </label>
-          <label>
-            <input type="radio" name="gender" value="female" required> Female
-          </label>
+          <label><input type="radio" name="gender" value="male" required> Male</label>
+          <label><input type="radio" name="gender" value="female" required> Female</label>
         </div>
 
-        <!-- Email -->
         <div class="input-box">
-          <input type="email" placeholder="Input Email Address" 
+          <input type="email" id="email" placeholder="Input Email Address"
                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
           <i class='bx bx-envelope-open'></i>
         </div>
 
-        <!-- Date of Birth -->
         <div class="input-box">
           <label>Select Date of Birth:</label>
-          <input type="date" required>
+          <input type="date" id="dob" required>
           <i class='bx bx-calendar-alt'></i>
         </div>
 
-        <div class="floating-clothes">
-          <div class="clothing-item tshirt"></div>
-          <div class="clothing-item pants"></div>
-          <div class="clothing-item sock"></div>
-          <div class="clothing-item dress"></div>
-          <div class="clothing-item hat"></div>
-          <div class="clothing-item scarf"></div>
-        </div>
-
-        <!-- Remember Me & Login link -->
         <div class="remember-forgot">
-          <label><input type="checkbox"> Remember me</label>
+          <label><input type="checkbox" id="rememberMe"> Remember me</label>
           <a href="mainlog.html">Already have an account? Login</a>
         </div>
 
-        <!-- Submit Button -->
         <button type="submit" class="button">Register</button>
       </form>
     </div>
   </div>
+
+  <script>
+  // register.js inline
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("registerForm");
+    const STORAGE_KEY = "fua_users"; // localStorage key
+
+    async function hashPassword(password) {
+      const enc = new TextEncoder().encode(password);
+      const buffer = await crypto.subtle.digest("SHA-256", enc);
+      return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2,"0")).join("");
+    }
+
+    function getUsers() {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    }
+    function saveUsers(users) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+      const phone = document.getElementById("phone").value.trim();
+      const userType = document.getElementById("userType").value; // "client" or "mama-fua"
+      const email = document.getElementById("email").value.trim();
+      const dob = document.getElementById("dob").value;
+      const gender = document.querySelector('input[name="gender"]:checked')?.value;
+      const remember = document.getElementById("rememberMe").checked;
+
+      if (!username || !password || !phone || !userType || !email || !dob || !gender) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      // Basic phone normalization
+      const phoneNormalized = phone.replace(/\s+/g, "");
+
+      const users = getUsers();
+
+      // Check existing user for same phone & userType
+      const existsSameType = users.find(u => u.phone === phoneNormalized && u.userType === userType);
+      if (existsSameType) {
+        alert("User already exists — please login.");
+        window.location.href = "mainlog.html";
+        return;
+      }
+
+      // (Optional) If phone exists under other type, we allow it but will enforce type at login.
+      // If you want to disallow same phone for both types, uncomment next lines:
+      // const existsSamePhone = users.find(u => u.phone === phoneNormalized);
+      // if (existsSamePhone) { alert("Phone already registered."); return; }
+
+      const hashed = await hashPassword(password);
+
+      const newUser = {
+        username,
+        phone: phoneNormalized,
+        password: hashed,
+        userType,   // "client" or "mama-fua"
+        email,
+        dob,
+        gender,
+        createdAt: new Date().toISOString()
+      };
+
+      users.push(newUser);
+      saveUsers(users);
+
+      if (remember) localStorage.setItem("fua_last_registered", phoneNormalized);
+
+      alert("Registration successful! You can now login.");
+      window.location.href = "mainlog.html";
+    });
+  });
+  </script>
 </body>
 </html>

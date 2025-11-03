@@ -1,103 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - LaundryPro</title>
-    <link rel="stylesheet" href="mainlog.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Fua Konnect</title>
+  <link rel="stylesheet" href="mainlog.css">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-image-section">
-            <div class="login-overlay">
-                <div class="logo">LaundryPro</div>
-                <div class="tagline">Professional Cleaning services at Your Doorstep</div>
-                
-                <div class="features">
-                    <div class="feature">
-                        <i class="fas fa-tshirt"></i>
-                        <span>Quality Cleaning</span>
-                    </div>
-                    
-                    <div class="feature">
-                        <i class="fas fa-clock"></i>
-                        <span>24/7 Service</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="login-form-section">
-            <div class="login-form-container">
-                <h2 class="login-title">Welcome Back</h2>
-                
-                <!-- User Type Selection (Visible by default) -->
-                <div class="user-type-buttons">
-                    <button class="user-btn mama-fua-btn" id="mamaFuaBtn">
-                        <i class="fas fa-user-tie"></i>
-                        Login as Mama Fua
-                    </button>
-                    <button class="user-btn client-btn" id="clientBtn">
-                        <i class="fas fa-user"></i>
-                        Login as Client
-                    </button>
-                </div>
-                
-                <!-- Login Form (Hidden by default) -->
-                <div class="login-form" id="loginForm">
-                    <h3 class="form-title" id="formTitle">Login</h3>
-                    <div class="input-group">
-                        <label for="mobile">Mobile Number</label>
-                        <input type="tel" id="mobile" placeholder="Enter your mobile number">
-                    </div>
-                    <div class="input-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" placeholder="Enter your password">
-                    </div>
-                    <button class="login-submit">Login</button>
-                    <div class="password-reset">
-                        <a href="#" id="resetLink">Forgot Password?</a>
-                    </div>
-                </div>
-                
-                <!-- Password Reset Form (Hidden by default) -->
-                <div class="reset-form" id="resetForm">
-                    <h3 class="form-title">Reset Password</h3>
-                    <div class="input-group">
-                        <label for="resetEmail">Email Address</label>
-                        <input type="email" id="resetEmail" placeholder="Enter your email address">
-                    </div>
-                    <div class="input-group">
-                        <label for="resetMobile">Mobile Number</label>
-                        <input type="tel" id="resetMobile" placeholder="Enter your mobile number">
-                    </div>
-                    <div class="input-group">
-                        <label for="newPassword">Enter password sent to Email</label>
-                        <input type="password" id="newPassword" placeholder="Enter new password">
-                    </div>
-                    <div class="input-group">
-                        <label for="confirmPassword">Enter new Password</label>
-                        <input type="password" id="confirmPassword" placeholder="Confirm new password">
-                    </div>
-                    <button class="login-submit">Reset Password</button>
-                    <div class="back-to-login">
-                        <a href="#" id="backToLogin">Back to Login</a>
-                    </div>
-                </div>
 
-                <!-- Back to Registration (Always visible) -->
-                <div class="back-to-register">
-                    <a href="index.html" class="back-btn">
-                        <i class="fas fa-arrow-left"></i>
-                        Back to Registration
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+  <div class="login-box">
+    <h2>Login to Fua Konnect</h2>
 
-    <script src="mainlog.js"></script>
+    <div class="alert" id="alertBox"></div>
+
+    <form id="loginForm">
+      <div class="input-group">
+        <input type="text" id="username" placeholder="Enter Username" required>
+        <i class='bx bx-user'></i>
+      </div>
+
+      <div class="input-group">
+        <input type="password" id="password" placeholder="Enter Password" required>
+        <i class='bx bx-lock'></i>
+      </div>
+
+      <div class="input-group">
+        <input type="number" id="phone" placeholder="Enter Phone Number" required>
+        <i class='bx bx-phone'></i>
+      </div>
+
+      <div class="input-group">
+        <select id="userType" required>
+          <option value="" disabled selected>Login as</option>
+          <option value="client">Client</option>
+          <option value="mama-fua">Mama Fua</option>
+        </select>
+        <i class='bx bx-user-plus'></i>
+      </div>
+
+      <button type="submit" class="button">Login</button>
+
+      <p style="text-align:center; margin-top:10px;">
+        <a href="index.html">Create Account</a>
+      </p>
+    </form>
+  </div>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("loginForm");
+    const alertBox = document.getElementById("alertBox");
+
+    async function hashPassword(password) {
+      const enc = new TextEncoder().encode(password);
+      const hash = await crypto.subtle.digest("SHA-256", enc);
+      return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, "0")).join("");
+    }
+
+    function getUsers() {
+      return JSON.parse(localStorage.getItem("fua_users") || "[]");
+    }
+
+    function showAlert(msg, color = "#f8d7da", textColor = "#842029") {
+      alertBox.textContent = msg;
+      alertBox.style.background = color;
+      alertBox.style.color = textColor;
+      alertBox.style.display = "block";
+      setTimeout(() => (alertBox.style.display = "none"), 4000);
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const userType = document.getElementById("userType").value;
+
+      const users = getUsers();
+      const user = users.find(u => u.username === username && u.phone === phone);
+
+      if (!user) {
+        showAlert("❌ User not found. Please register first.");
+        return;
+      }
+
+      const hashedInput = await hashPassword(password);
+
+      if (hashedInput !== user.password) {
+        showAlert("❌ Wrong password!");
+        return;
+      }
+
+      if (user.userType !== userType) {
+        showAlert("⚠️ You are logging in into the wrong account type!");
+        return;
+      }
+
+      // ✅ Successful login
+      sessionStorage.setItem("fua_logged_user", JSON.stringify(user));
+      showAlert("✅ Login successful! Redirecting...", "#d1e7dd", "#0f5132");
+
+      setTimeout(() => {
+        if (userType === "client") {
+          window.location.href = "clientdash.html";
+        } else {
+          window.location.href = "mamafuadash.html";
+        }
+      }, 1500);
+    });
+  });
+  </script>
+
 </body>
 </html>
