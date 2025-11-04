@@ -26,7 +26,7 @@
       </div>
 
       <div class="input-group">
-        <input type="number" id="phone" placeholder="Enter Phone Number" required>
+        <input type="tel" id="phone" placeholder="7XXXXXXXX" required maxlength="9" pattern="[0-9]{9}">
         <i class='bx bx-phone'></i>
       </div>
 
@@ -41,33 +41,44 @@
 
       <button type="submit" class="button">Login</button>
 
-      <p style="text-align:center; margin-top:10px;">
-        <a href="index.html">Create Account</a>
-      </p>
+      <div class="login-links">
+        <p style="text-align:center; margin-top:10px;">
+          <a href="index.html">Create Account</a>
+        </p>
+        <p style="text-align:center; margin-top:8px;">
+          <a href="paswdreset.html">Forgot your password? Reset it</a>
+        </p>
+      </div>
     </form>
   </div>
 
-  <script>
-  document.addEventListener("DOMContentLoaded", () => {
+  <!-- ✅ Firebase Firestore Login Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDV9rLWwVfJ92teYPkXWFALYEqmZO2E4Yk",
+      authDomain: "fua-app-a2fb5.firebaseapp.com",
+      projectId: "fua-app-a2fb5",
+      storageBucket: "fua-app-a2fb5.firebasestorage.app",
+      messagingSenderId: "1093221394623",
+      appId: "1:1093221394623:web:3d8c8afe038cdacd53be0a",
+      measurementId: "G-LCW00REGF8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
     const form = document.getElementById("loginForm");
     const alertBox = document.getElementById("alertBox");
 
-    async function hashPassword(password) {
-      const enc = new TextEncoder().encode(password);
-      const hash = await crypto.subtle.digest("SHA-256", enc);
-      return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, "0")).join("");
-    }
-
-    function getUsers() {
-      return JSON.parse(localStorage.getItem("fua_users") || "[]");
-    }
-
-    function showAlert(msg, color = "#f8d7da", textColor = "#842029") {
+    function showAlert(msg, bg = "#f8d7da", color = "#842029") {
       alertBox.textContent = msg;
-      alertBox.style.background = color;
-      alertBox.style.color = textColor;
+      alertBox.style.background = bg;
+      alertBox.style.color = color;
       alertBox.style.display = "block";
-      setTimeout(() => (alertBox.style.display = "none"), 4000);
+      setTimeout(() => alertBox.style.display = "none", 4000);
     }
 
     form.addEventListener("submit", async (e) => {
@@ -75,42 +86,51 @@
 
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value.trim();
-      const phone = document.getElementById("phone").value.trim();
+      const phone = "+254" + document.getElementById("phone").value.trim();
       const userType = document.getElementById("userType").value;
 
-      const users = getUsers();
-      const user = users.find(u => u.username === username && u.phone === phone);
+      try {
+        const q = query(
+          collection(db, "users"),
+          where("username", "==", username),
+          where("phone", "==", phone),
+          where("userType", "==", userType)
+        );
 
-      if (!user) {
-        showAlert("❌ User not found. Please register first.");
-        return;
-      }
+        const snapshot = await getDocs(q);
 
-      const hashedInput = await hashPassword(password);
-
-      if (hashedInput !== user.password) {
-        showAlert("❌ Wrong password!");
-        return;
-      }
-
-      if (user.userType !== userType) {
-        showAlert("⚠️ You are logging in into the wrong account type!");
-        return;
-      }
-
-      // ✅ Successful login
-      sessionStorage.setItem("fua_logged_user", JSON.stringify(user));
-      showAlert("✅ Login successful! Redirecting...", "#d1e7dd", "#0f5132");
-
-      setTimeout(() => {
-        if (userType === "client") {
-          window.location.href = "clientdash.html";
-        } else {
-          window.location.href = "mamafuadash.html";
+        if (snapshot.empty) {
+          showAlert("❌ No matching user found. Please register first.");
+          return;
         }
-      }, 1500);
+
+        let found = false;
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          if (data.password === password) {
+            found = true;
+            sessionStorage.setItem("fua_logged_user", JSON.stringify(data));
+            showAlert("✅ Login successful! Welcome...", "#d1e7dd", "#0f5132");
+
+            setTimeout(() => {
+              if (userType === "client") {
+                window.location.href = "clientdash.html";
+              } else {
+                window.location.href = "mamafuadash.html";
+              }
+            }, 1500);
+          }
+        });
+
+        if (!found) {
+          showAlert("❌ Incorrect password!");
+        }
+
+      } catch (error) {
+        console.error("❌ Login error:", error);
+        showAlert("⚠️ Something went wrong. Check console for details.");
+      }
     });
-  });
   </script>
 
 </body>

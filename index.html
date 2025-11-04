@@ -3,9 +3,80 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Fua app - Register</title>
+  <title>Fua App - Register</title>
   <link rel="stylesheet" href="style.css" />
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+  <style>
+    .password-criteria {
+      font-size: 12px;
+      color: #666;
+      margin: 5px 0;
+      padding: 0 10px;
+    }
+    .criteria-met { color: green; }
+    .criteria-not-met { color: red; }
+
+    .phone-input-container {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 5px;
+    }
+    .flag-symbol {
+      width: 20px;
+      height: 15px;
+      background: linear-gradient(to bottom, black 0%, black 33.33%, red 33.33%, red 66.66%, green 66.66%, green 100%);
+      border: 1px solid #ccc;
+      margin-right: 5px;
+      position: relative;
+    }
+    .flag-symbol::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 33.33%;
+      height: 100%;
+      background:
+        linear-gradient(135deg, transparent 45%, white 45%, white 55%, transparent 55%),
+        linear-gradient(225deg, transparent 45%, white 45%, white 55%, transparent 55%),
+        linear-gradient(to bottom, black 0%, black 33.33%, red 33.33%, red 66.66%, green 66.66%, green 100%);
+    }
+    .phone-prefix {
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+      color: #333;
+      padding-right: 10px;
+      border-right: 1px solid #ccc;
+      margin-right: 5px;
+    }
+    .phone-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 0 10px;
+    }
+    .input-box {
+      position: relative;
+      margin-bottom: 15px;
+    }
+    .input-box i {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #777;
+    }
+    .password-toggle {
+      cursor: pointer;
+      font-size: 18px;
+    }
+    .password-toggle:hover { color: #333; }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -21,12 +92,28 @@
 
         <div class="input-box">
           <input type="password" id="password" placeholder="Input Password" required>
-          <i class='bx bx-lock'></i>
+          <i class='bx bx-show password-toggle' id="passwordToggle"></i>
+        </div>
+
+        <div class="password-criteria">
+          <span id="length" class="criteria-not-met">• At least 8 characters</span><br>
+          <span id="capital" class="criteria-not-met">• One capital letter</span><br>
+          <span id="symbol" class="criteria-not-met">• One symbol</span>
         </div>
 
         <div class="input-box">
-          <input type="tel" id="phone" placeholder="Input Phone Number" required>
-          <i class='bx bx-phone'></i>
+          <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+          <i class='bx bx-show password-toggle' id="confirmPasswordToggle"></i>
+        </div>
+
+        <div class="input-box">
+          <div class="phone-input-container">
+            <div class="phone-prefix">
+              <div class="flag-symbol"></div>
+              <span>+254</span>
+            </div>
+            <input type="tel" id="phone" class="phone-input" placeholder="7XXXXXXXX" required pattern="[0-9]{9}" maxlength="9">
+          </div>
         </div>
 
         <div class="input-box">
@@ -65,82 +152,89 @@
     </div>
   </div>
 
-  <script>
-  // register.js inline
-  document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("registerForm");
-    const STORAGE_KEY = "fua_users"; // localStorage key
+  <!-- ✅ Firebase Registration Script (Fixed) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    async function hashPassword(password) {
-      const enc = new TextEncoder().encode(password);
-      const buffer = await crypto.subtle.digest("SHA-256", enc);
-      return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2,"0")).join("");
+    const firebaseConfig = {
+      apiKey: "AIzaSyDV9rLWwVfJ92teYPkXWFALYEqmZO2E4Yk",
+      authDomain: "fua-app-a2fb5.firebaseapp.com",
+      projectId: "fua-app-a2fb5",
+      storageBucket: "fua-app-a2fb5.appspot.com",
+      messagingSenderId: "1093221394623",
+      appId: "1:1093221394623:web:3d8c8afe038cdacd53be0a",
+      measurementId: "G-LCW00REGF8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    console.log("✅ Firebase + Firestore connected successfully!");
+
+    // Password toggle
+    const togglePassword = (fieldId, toggleId) => {
+      const field = document.getElementById(fieldId);
+      const icon = document.getElementById(toggleId);
+      icon.onclick = () => {
+        if (field.type === "password") {
+          field.type = "text";
+          icon.classList.replace("bx-show", "bx-hide");
+        } else {
+          field.type = "password";
+          icon.classList.replace("bx-hide", "bx-show");
+        }
+      };
+    };
+    togglePassword("password", "passwordToggle");
+    togglePassword("confirmPassword", "confirmPasswordToggle");
+
+    // Password validation
+    const passwordInput = document.getElementById("password");
+    const lengthCriteria = document.getElementById("length");
+    const capitalCriteria = document.getElementById("capital");
+    const symbolCriteria = document.getElementById("symbol");
+
+    function validatePassword(password) {
+      const hasMinLength = password.length >= 8;
+      const hasCapital = /[A-Z]/.test(password);
+      const hasSymbol = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+      lengthCriteria.className = hasMinLength ? 'criteria-met' : 'criteria-not-met';
+      capitalCriteria.className = hasCapital ? 'criteria-met' : 'criteria-not-met';
+      symbolCriteria.className = hasSymbol ? 'criteria-met' : 'criteria-not-met';
+      return hasMinLength && hasCapital && hasSymbol;
     }
 
-    function getUsers() {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    }
-    function saveUsers(users) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
-    }
+    passwordInput.addEventListener("input", e => validatePassword(e.target.value));
 
-    form.addEventListener("submit", async (e) => {
+    // Form submission
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value;
-      const phone = document.getElementById("phone").value.trim();
-      const userType = document.getElementById("userType").value; // "client" or "mama-fua"
+      const confirmPassword = document.getElementById("confirmPassword").value;
+      const phone = "+254" + document.getElementById("phone").value.trim();
+      const userType = document.getElementById("userType").value;
       const email = document.getElementById("email").value.trim();
       const dob = document.getElementById("dob").value;
       const gender = document.querySelector('input[name="gender"]:checked')?.value;
-      const remember = document.getElementById("rememberMe").checked;
 
-      if (!username || !password || !phone || !userType || !email || !dob || !gender) {
-        alert("Please fill all fields.");
-        return;
-      }
+      if (!validatePassword(password)) return alert("Password criteria not met.");
+      if (password !== confirmPassword) return alert("Passwords do not match.");
 
-      // Basic phone normalization
-      const phoneNormalized = phone.replace(/\s+/g, "");
-
-      const users = getUsers();
-
-      // Check existing user for same phone & userType
-      const existsSameType = users.find(u => u.phone === phoneNormalized && u.userType === userType);
-      if (existsSameType) {
-        alert("User already exists — please login.");
+      try {
+        await addDoc(collection(db, "users"), {
+          username, phone, email, dob, gender, userType,
+          password,
+          createdAt: new Date().toISOString()
+        });
+        alert("✅ Registration successful! You can now login.");
         window.location.href = "mainlog.html";
-        return;
+      } catch (error) {
+        console.error("❌ Firestore error:", error);
+        alert("Error saving data. Check console for details.");
       }
-
-      // (Optional) If phone exists under other type, we allow it but will enforce type at login.
-      // If you want to disallow same phone for both types, uncomment next lines:
-      // const existsSamePhone = users.find(u => u.phone === phoneNormalized);
-      // if (existsSamePhone) { alert("Phone already registered."); return; }
-
-      const hashed = await hashPassword(password);
-
-      const newUser = {
-        username,
-        phone: phoneNormalized,
-        password: hashed,
-        userType,   // "client" or "mama-fua"
-        email,
-        dob,
-        gender,
-        createdAt: new Date().toISOString()
-      };
-
-      users.push(newUser);
-      saveUsers(users);
-
-      if (remember) localStorage.setItem("fua_last_registered", phoneNormalized);
-
-      alert("Registration successful! You can now login.");
-      window.location.href = "mainlog.html";
     });
-  });
   </script>
 </body>
 </html>

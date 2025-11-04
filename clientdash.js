@@ -1,4 +1,40 @@
 // Dashboard JavaScript - Basic Working Version
+
+  // ✅ Load user from session storage
+  const userData = JSON.parse(sessionStorage.getItem("fua_logged_user"));
+
+  // If not logged in, redirect to login
+  if (!userData) {
+    alert("Please login to access your dashboard.");
+    window.location.href = "mainlog.html";
+  }
+
+  // ✅ Update sidebar and account info dynamically
+  document.addEventListener("DOMContentLoaded", () => {
+    const sidebarName = document.querySelector(".user-details h3");
+    const sidebarPhone = document.querySelector(".user-details p");
+    const profileName = document.querySelector(".profile-info h2");
+    const profilePhone = document.querySelector(".profile-info p");
+
+    if (userData) {
+      sidebarName.textContent = userData.username || "User";
+      sidebarPhone.textContent = userData.phone || "";
+      profileName.textContent = userData.username || "User";
+      profilePhone.textContent = userData.phone || "";
+    }
+
+    // ✅ Logout Functionality
+    const logoutButtons = document.querySelectorAll(".logout, .logout-option");
+    logoutButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        sessionStorage.removeItem("fua_logged_user");
+        alert("Logged out successfully!");
+        window.location.href = "mainlog.html";
+      });
+    });
+  });
+
+
 class Dashboard {
     constructor() {
         this.currentScreen = 'homeScreen';

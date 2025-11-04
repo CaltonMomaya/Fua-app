@@ -1,0 +1,479 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.reset-container {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    width: 100%;
+    max-width: 480px;
+    position: relative;
+    overflow: hidden;
+}
+
+.reset-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.logo i {
+    font-size: 2rem;
+    color: #667eea;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.logo h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.reset-header p {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Progress Steps */
+.progress-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.progress-steps::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: #e0e0e0;
+    z-index: 1;
+}
+
+.progress-bar {
+    position: absolute;
+    top: 20px;
+    left: 10%;
+    height: 2px;
+    background: #667eea;
+    z-index: 2;
+    transition: width 0.3s ease;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 3;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #999;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+}
+
+.step.active .step-number {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.step span {
+    font-size: 0.8rem;
+    color: #999;
+    font-weight: 500;
+}
+
+.step.active span {
+    color: #667eea;
+    font-weight: 600;
+}
+
+/* Reset Steps */
+.reset-step {
+    display: none;
+}
+
+.reset-step.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.step-content h2 {
+    color: #333;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.step-content p {
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 0.9rem;
+}
+
+.user-email {
+    font-weight: 600;
+    color: #667eea;
+}
+
+/* Forms */
+.reset-form {
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-group i {
+    position: absolute;
+    left: 15px;
+    color: #999;
+    z-index: 2;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 15px 15px 15px 45px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #fafafa;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.password-group {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.toggle-password:hover {
+    color: #667eea;
+}
+
+/* Code Inputs */
+.code-inputs {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.code-input {
+    width: 50px;
+    height: 60px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    background: #fafafa;
+    transition: all 0.3s ease;
+}
+
+.code-input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.code-input.filled {
+    border-color: #667eea;
+    background: white;
+}
+
+/* Password Strength */
+.password-strength {
+    margin-top: 10px;
+}
+
+.strength-bar {
+    width: 100%;
+    height: 4px;
+    background: #e0e0e0;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.strength-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.strength-text {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.password-match {
+    display: none;
+    align-items: center;
+    gap: 5px;
+    margin-top: 5px;
+    font-size: 0.8rem;
+    color: #27ae60;
+}
+
+.password-match.show {
+    display: flex;
+}
+
+/* Resend Code */
+.resend-code {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.resend-code p {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.resend-code a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.resend-code a:hover {
+    text-decoration: underline;
+}
+
+.countdown {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+/* Buttons */
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Back Links */
+.back-to-login,
+.back-to-email {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+/* Success Message */
+.success-message {
+    display: none;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.success-message.show {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+.success-icon {
+    font-size: 4rem;
+    color: #27ae60;
+    margin-bottom: 20px;
+}
+
+.success-message h2 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.success-message p {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.loading-spinner.show {
+    display: flex;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #e0e0e0;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-spinner p {
+    color: #666;
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .reset-container {
+        padding: 30px 20px;
+        margin: 10px;
+    }
+
+    .progress-steps {
+        margin-bottom: 30px;
+    }
+
+    .step-number {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+
+    .step span {
+        font-size: 0.7rem;
+    }
+
+    .code-input {
+        width: 45px;
+        height: 55px;
+        font-size: 1.3rem;
+    }
+
+    .input-group input {
+        padding: 12px 12px 12px 40px;
+    }
+}
