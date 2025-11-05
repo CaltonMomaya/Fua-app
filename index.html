@@ -85,11 +85,13 @@
       <form id="registerForm">
         <h1>Welcome to Fua Konnect</h1>
 
+        <!-- Username -->
         <div class="input-box">
           <input type="text" id="username" placeholder="Input Username" required>
           <i class='bx bx-user'></i>
         </div>
 
+        <!-- Password -->
         <div class="input-box">
           <input type="password" id="password" placeholder="Input Password" required>
           <i class='bx bx-show password-toggle' id="passwordToggle"></i>
@@ -101,11 +103,13 @@
           <span id="symbol" class="criteria-not-met">• One symbol</span>
         </div>
 
+        <!-- Confirm Password -->
         <div class="input-box">
           <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
           <i class='bx bx-show password-toggle' id="confirmPasswordToggle"></i>
         </div>
 
+        <!-- Phone -->
         <div class="input-box">
           <div class="phone-input-container">
             <div class="phone-prefix">
@@ -116,6 +120,7 @@
           </div>
         </div>
 
+        <!-- User Type -->
         <div class="input-box">
           <select class="register-select" id="userType" required>
             <option value="" disabled selected>Register as</option>
@@ -125,17 +130,20 @@
           <i class='bx bx-user-plus'></i>
         </div>
 
+        <!-- Gender -->
         <div class="input-box gender-box">
           <label><input type="radio" name="gender" value="male" required> Male</label>
           <label><input type="radio" name="gender" value="female" required> Female</label>
         </div>
 
+        <!-- Email -->
         <div class="input-box">
           <input type="email" id="email" placeholder="Input Email Address"
                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
           <i class='bx bx-envelope-open'></i>
         </div>
 
+        <!-- DOB -->
         <div class="input-box">
           <label>Select Date of Birth:</label>
           <input type="date" id="dob" required>
@@ -152,7 +160,15 @@
     </div>
   </div>
 
-  <!-- ✅ Firebase Registration Script (Fixed) -->
+  <!-- ✅ EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function() {
+      emailjs.init("KqZoTEnAMf0vBJ2dM"); // Replace with your EmailJS Public Key
+    })();
+  </script>
+
+  <!-- ✅ Firebase + OTP Verification -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -169,9 +185,8 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    console.log("✅ Firebase + Firestore connected successfully!");
 
-    // Password toggle
+    // ✅ Password toggle logic
     const togglePassword = (fieldId, toggleId) => {
       const field = document.getElementById(fieldId);
       const icon = document.getElementById(toggleId);
@@ -188,7 +203,7 @@
     togglePassword("password", "passwordToggle");
     togglePassword("confirmPassword", "confirmPasswordToggle");
 
-    // Password validation
+    // ✅ Password validation
     const passwordInput = document.getElementById("password");
     const lengthCriteria = document.getElementById("length");
     const capitalCriteria = document.getElementById("capital");
@@ -203,10 +218,14 @@
       symbolCriteria.className = hasSymbol ? 'criteria-met' : 'criteria-not-met';
       return hasMinLength && hasCapital && hasSymbol;
     }
-
     passwordInput.addEventListener("input", e => validatePassword(e.target.value));
 
-    // Form submission
+    // ✅ OTP Generator
+    function generateOTP() {
+      return Math.floor(100000 + Math.random() * 900000).toString();
+    }
+
+    // ✅ Submit with OTP verification
     document.getElementById("registerForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -222,17 +241,29 @@
       if (!validatePassword(password)) return alert("Password criteria not met.");
       if (password !== confirmPassword) return alert("Passwords do not match.");
 
+      const otp = generateOTP();
+
       try {
-        await addDoc(collection(db, "users"), {
-          username, phone, email, dob, gender, userType,
-          password,
-          createdAt: new Date().toISOString()
+        await emailjs.send("service_lhfe8dg", "template_1h3z4ix", {
+          to_email: email,
+          user_name: username,
+          otp_code: otp
         });
-        alert("✅ Registration successful! You can now login.");
-        window.location.href = "mainlog.html";
+
+        const userOTP = prompt("An OTP has been sent to your email. Enter it to continue:");
+        if (userOTP === otp) {
+          await addDoc(collection(db, "users"), {
+            username, phone, email, dob, gender, userType, password,
+            createdAt: new Date().toISOString()
+          });
+          alert("✅ Registration successful! You can now login.");
+          window.location.href = "mainlog.html";
+        } else {
+          alert("❌ Incorrect OTP. Please try again.");
+        }
       } catch (error) {
-        console.error("❌ Firestore error:", error);
-        alert("Error saving data. Check console for details.");
+        console.error("Error sending OTP or saving:", error);
+        alert("An error occurred. Please try again.");
       }
     });
   </script>
