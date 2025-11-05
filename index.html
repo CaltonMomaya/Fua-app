@@ -76,6 +76,75 @@
       font-size: 18px;
     }
     .password-toggle:hover { color: #333; }
+
+    /* ✅ Modern OTP Modal */
+    .otp-modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .otp-modal.active { display: flex; }
+
+    .otp-box {
+      background: white;
+      border-radius: 15px;
+      padding: 25px 30px;
+      text-align: center;
+      width: 90%;
+      max-width: 350px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      animation: popIn 0.3s ease;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .otp-box h2 {
+      margin-bottom: 10px;
+      color: #333;
+    }
+    .otp-box p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 15px;
+    }
+    .otp-input {
+      font-size: 20px;
+      padding: 10px;
+      width: 80%;
+      text-align: center;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      margin-bottom: 10px;
+    }
+    .otp-input:focus {
+      border-color: #00bfa5;
+    }
+    .otp-button {
+      padding: 10px 20px;
+      background-color: #00bfa5;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .otp-button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .countdown {
+      font-size: 14px;
+      color: #ff0000;
+      margin-top: 5px;
+    }
   </style>
 </head>
 <body>
@@ -85,13 +154,11 @@
       <form id="registerForm">
         <h1>Welcome to Fua Konnect</h1>
 
-        <!-- Username -->
         <div class="input-box">
           <input type="text" id="username" placeholder="Input Username" required>
           <i class='bx bx-user'></i>
         </div>
 
-        <!-- Password -->
         <div class="input-box">
           <input type="password" id="password" placeholder="Input Password" required>
           <i class='bx bx-show password-toggle' id="passwordToggle"></i>
@@ -103,13 +170,11 @@
           <span id="symbol" class="criteria-not-met">• One symbol</span>
         </div>
 
-        <!-- Confirm Password -->
         <div class="input-box">
           <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
           <i class='bx bx-show password-toggle' id="confirmPasswordToggle"></i>
         </div>
 
-        <!-- Phone -->
         <div class="input-box">
           <div class="phone-input-container">
             <div class="phone-prefix">
@@ -120,7 +185,6 @@
           </div>
         </div>
 
-        <!-- User Type -->
         <div class="input-box">
           <select class="register-select" id="userType" required>
             <option value="" disabled selected>Register as</option>
@@ -130,20 +194,17 @@
           <i class='bx bx-user-plus'></i>
         </div>
 
-        <!-- Gender -->
         <div class="input-box gender-box">
           <label><input type="radio" name="gender" value="male" required> Male</label>
           <label><input type="radio" name="gender" value="female" required> Female</label>
         </div>
 
-        <!-- Email -->
         <div class="input-box">
           <input type="email" id="email" placeholder="Input Email Address"
                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
           <i class='bx bx-envelope-open'></i>
         </div>
 
-        <!-- DOB -->
         <div class="input-box">
           <label>Select Date of Birth:</label>
           <input type="date" id="dob" required>
@@ -160,19 +221,23 @@
     </div>
   </div>
 
-  <!-- ✅ EmailJS SDK -->
+  <!-- ✅ Modern OTP Modal -->
+  <div class="otp-modal" id="otpModal">
+    <div class="otp-box">
+      <h2>Email Verification</h2>
+      <p>Enter the 6-digit OTP sent to your email.</p>
+      <input type="text" id="otpInput" class="otp-input" maxlength="6" placeholder="Enter OTP">
+      <div class="countdown" id="countdown">01:00</div>
+      <button id="verifyOtpBtn" class="otp-button">Verify OTP</button>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
-    (function() {
-      emailjs.init("MGI62By2LOWVwfjYc"); // Replace with your EmailJS Public Key
-    })();
-
-    // ✅ Prevent future DOB selection
-    const dobInput = document.getElementById("dob");
-    dobInput.max = new Date().toISOString().split("T")[0];
+    (function() { emailjs.init("MGI62By2LOWVwfjYc"); })();
+    document.getElementById("dob").max = new Date().toISOString().split("T")[0];
   </script>
 
-  <!-- ✅ Firebase + OTP Verification -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -190,51 +255,37 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // ✅ Password toggle logic
-    const togglePassword = (fieldId, toggleId) => {
-      const field = document.getElementById(fieldId);
+    const togglePassword = (id, toggleId) => {
+      const field = document.getElementById(id);
       const icon = document.getElementById(toggleId);
       icon.onclick = () => {
-        if (field.type === "password") {
-          field.type = "text";
-          icon.classList.replace("bx-show", "bx-hide");
-        } else {
-          field.type = "password";
-          icon.classList.replace("bx-hide", "bx-show");
-        }
+        field.type = field.type === "password" ? "text" : "password";
+        icon.classList.toggle("bx-show");
+        icon.classList.toggle("bx-hide");
       };
     };
     togglePassword("password", "passwordToggle");
     togglePassword("confirmPassword", "confirmPasswordToggle");
 
-    // ✅ Password validation (red → green feedback restored)
     const passwordInput = document.getElementById("password");
-    const lengthCriteria = document.getElementById("length");
-    const capitalCriteria = document.getElementById("capital");
-    const symbolCriteria = document.getElementById("symbol");
-
-    function validatePassword(password) {
-      const hasMinLength = password.length >= 8;
-      const hasCapital = /[A-Z]/.test(password);
-      const hasSymbol = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
-
-      lengthCriteria.style.color = hasMinLength ? "green" : "red";
-      capitalCriteria.style.color = hasCapital ? "green" : "red";
-      symbolCriteria.style.color = hasSymbol ? "green" : "red";
-
-      return hasMinLength && hasCapital && hasSymbol;
-    }
+    const lengthC = document.getElementById("length");
+    const capitalC = document.getElementById("capital");
+    const symbolC = document.getElementById("symbol");
+    const validatePassword = p => {
+      const okLen = p.length >= 8;
+      const okCap = /[A-Z]/.test(p);
+      const okSym = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(p);
+      lengthC.style.color = okLen ? "green" : "red";
+      capitalC.style.color = okCap ? "green" : "red";
+      symbolC.style.color = okSym ? "green" : "red";
+      return okLen && okCap && okSym;
+    };
     passwordInput.addEventListener("input", e => validatePassword(e.target.value));
 
-    // ✅ OTP Generator
-    function generateOTP() {
-      return Math.floor(100000 + Math.random() * 900000).toString();
-    }
+    const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
-    // ✅ Submit with OTP verification (valid 1 min)
     document.getElementById("registerForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value;
       const confirmPassword = document.getElementById("confirmPassword").value;
@@ -248,7 +299,7 @@
       if (password !== confirmPassword) return alert("Passwords do not match.");
 
       const otp = generateOTP();
-      const validUntil = new Date(Date.now() + 60 * 1000); // 1 minute expiry
+      const validUntil = new Date(Date.now() + 60 * 1000);
 
       try {
         await emailjs.send("service_lhfe8dg", "template_1h3z4ix", {
@@ -258,25 +309,39 @@
           valid_until: validUntil.toLocaleTimeString()
         });
 
-        const start = Date.now();
-        const userOTP = prompt("An OTP has been sent to your email. Enter it to continue:");
-        const elapsed = Date.now() - start;
+        // ✅ Show modal
+        const modal = document.getElementById("otpModal");
+        modal.classList.add("active");
+        const countdown = document.getElementById("countdown");
+        const verifyBtn = document.getElementById("verifyOtpBtn");
+        const otpInput = document.getElementById("otpInput");
+        let remaining = 60;
+        const timer = setInterval(() => {
+          remaining--;
+          const m = String(Math.floor(remaining / 60)).padStart(2, '0');
+          const s = String(remaining % 60).padStart(2, '0');
+          countdown.textContent = `${m}:${s}`;
+          if (remaining <= 0) {
+            clearInterval(timer);
+            verifyBtn.disabled = true;
+            countdown.textContent = "OTP expired!";
+          }
+        }, 1000);
 
-        if (elapsed > 60000) {
-          alert("❌ OTP expired. Please register again.");
-          return;
-        }
-
-        if (userOTP === otp) {
-          await addDoc(collection(db, "users"), {
-            username, phone, email, dob, gender, userType, password,
-            createdAt: new Date().toISOString()
-          });
-          alert("✅ Registration successful! You can now login.");
-          window.location.href = "mainlog.html";
-        } else {
-          alert("❌ Incorrect OTP. Please try again.");
-        }
+        verifyBtn.onclick = async () => {
+          if (otpInput.value === otp && remaining > 0) {
+            clearInterval(timer);
+            modal.classList.remove("active");
+            await addDoc(collection(db, "users"), {
+              username, phone, email, dob, gender, userType, password,
+              createdAt: new Date().toISOString()
+            });
+            alert("✅ Registration successful! You can now login.");
+            window.location.href = "mainlog.html";
+          } else {
+            alert("❌ Incorrect or expired OTP.");
+          }
+        };
       } catch (error) {
         console.error("Error sending OTP or saving:", error);
         alert("An error occurred. Please try again.");
