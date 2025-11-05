@@ -164,8 +164,12 @@
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
     (function() {
-      emailjs.init("KqZoTEnAMf0vBJ2dM"); // Replace with your EmailJS Public Key
+      emailjs.init("MGI62By2LOWVwfjYc"); // Replace with your EmailJS Public Key
     })();
+
+    // ✅ Prevent future DOB selection
+    const dobInput = document.getElementById("dob");
+    dobInput.max = new Date().toISOString().split("T")[0];
   </script>
 
   <!-- ✅ Firebase + OTP Verification -->
@@ -203,7 +207,7 @@
     togglePassword("password", "passwordToggle");
     togglePassword("confirmPassword", "confirmPasswordToggle");
 
-    // ✅ Password validation
+    // ✅ Password validation (red → green feedback restored)
     const passwordInput = document.getElementById("password");
     const lengthCriteria = document.getElementById("length");
     const capitalCriteria = document.getElementById("capital");
@@ -213,9 +217,11 @@
       const hasMinLength = password.length >= 8;
       const hasCapital = /[A-Z]/.test(password);
       const hasSymbol = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
-      lengthCriteria.className = hasMinLength ? 'criteria-met' : 'criteria-not-met';
-      capitalCriteria.className = hasCapital ? 'criteria-met' : 'criteria-not-met';
-      symbolCriteria.className = hasSymbol ? 'criteria-met' : 'criteria-not-met';
+
+      lengthCriteria.style.color = hasMinLength ? "green" : "red";
+      capitalCriteria.style.color = hasCapital ? "green" : "red";
+      symbolCriteria.style.color = hasSymbol ? "green" : "red";
+
       return hasMinLength && hasCapital && hasSymbol;
     }
     passwordInput.addEventListener("input", e => validatePassword(e.target.value));
@@ -225,7 +231,7 @@
       return Math.floor(100000 + Math.random() * 900000).toString();
     }
 
-    // ✅ Submit with OTP verification
+    // ✅ Submit with OTP verification (valid 1 min)
     document.getElementById("registerForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -242,15 +248,25 @@
       if (password !== confirmPassword) return alert("Passwords do not match.");
 
       const otp = generateOTP();
+      const validUntil = new Date(Date.now() + 60 * 1000); // 1 minute expiry
 
       try {
         await emailjs.send("service_lhfe8dg", "template_1h3z4ix", {
           to_email: email,
-          user_name: username,
-          otp_code: otp
+          to_name: username,
+          otp_code: otp,
+          valid_until: validUntil.toLocaleTimeString()
         });
 
+        const start = Date.now();
         const userOTP = prompt("An OTP has been sent to your email. Enter it to continue:");
+        const elapsed = Date.now() - start;
+
+        if (elapsed > 60000) {
+          alert("❌ OTP expired. Please register again.");
+          return;
+        }
+
         if (userOTP === otp) {
           await addDoc(collection(db, "users"), {
             username, phone, email, dob, gender, userType, password,
