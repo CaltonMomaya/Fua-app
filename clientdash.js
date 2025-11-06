@@ -1,39 +1,57 @@
-// Dashboard JavaScript - Basic Working Version
+// Dashboard JavaScript - Updated to fetch real Mama Fua from Firestore
 
-  // ✅ Load user from session storage
-  const userData = JSON.parse(sessionStorage.getItem("fua_logged_user"));
+// ✅ Firebase Import and Initialization (Modular SDK v9+)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-  // If not logged in, redirect to login
-  if (!userData) {
+// Your Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDV9rLWwVfJ92teYPkXWFALYEqmZO2E4Yk",
+  authDomain: "fua-app-a2fb5.firebaseapp.com",
+  projectId: "fua-app-a2fb5",
+  storageBucket: "fua-app-a2fb5.firebasestorage.app",
+  messagingSenderId: "1093221394623",
+  appId: "1:1093221394623:web:3d8c8afe038cdacd53be0a",
+  measurementId: "G-LCW00REGF8"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ✅ Load user from session storage
+const userData = JSON.parse(sessionStorage.getItem("fua_logged_user"));
+
+// If not logged in, redirect to login
+if (!userData) {
     alert("Please login to access your dashboard.");
     window.location.href = "mainlog.html";
-  }
+}
 
-  // ✅ Update sidebar and account info dynamically
-  document.addEventListener("DOMContentLoaded", () => {
+// ✅ Update sidebar and account info dynamically
+document.addEventListener("DOMContentLoaded", () => {
     const sidebarName = document.querySelector(".user-details h3");
     const sidebarPhone = document.querySelector(".user-details p");
     const profileName = document.querySelector(".profile-info h2");
     const profilePhone = document.querySelector(".profile-info p");
 
     if (userData) {
-      sidebarName.textContent = userData.username || "User";
-      sidebarPhone.textContent = userData.phone || "";
-      profileName.textContent = userData.username || "User";
-      profilePhone.textContent = userData.phone || "";
+        sidebarName.textContent = userData.username || "User";
+        sidebarPhone.textContent = userData.phone || "";
+        profileName.textContent = userData.username || "User";
+        profilePhone.textContent = userData.phone || "";
     }
 
     // ✅ Logout Functionality
     const logoutButtons = document.querySelectorAll(".logout, .logout-option");
     logoutButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        sessionStorage.removeItem("fua_logged_user");
-        alert("Logged out successfully!");
-        window.location.href = "mainlog.html";
-      });
+        btn.addEventListener("click", () => {
+            sessionStorage.removeItem("fua_logged_user");
+            alert("Logged out successfully!");
+            window.location.href = "mainlog.html";
+        });
     });
-  });
-
+});
 
 class Dashboard {
     constructor() {
@@ -102,7 +120,7 @@ class Dashboard {
                 const serviceType = e.currentTarget.querySelector('h3').textContent;
                 console.log('Package selected:', serviceType, price);
                 this.selectPackage(price, serviceType, e.currentTarget);
-                this.searchMamaFua();
+                this.searchMamaFua(serviceType);
             });
         });
 
@@ -247,18 +265,80 @@ class Dashboard {
         console.log('Package selected:', this.selectedPackage);
     }
 
-    searchMamaFua() {
-        console.log('Starting Mama Fua search...');
+    async searchMamaFua(serviceType) {
+        console.log('Starting Mama Fua search for service:', serviceType);
         this.switchScreen('searchScreen');
 
-        // Simulate search delay
-        setTimeout(() => {
-            this.showMamaFuaResults();
-        }, 2000);
+        try {
+            // Show loading state
+            const searchStatus = document.querySelector('.search-status h3');
+            const searchSubtitle = document.querySelector('.search-status p');
+            
+            if (searchStatus) searchStatus.textContent = 'Searching for Mama Fua...';
+            if (searchSubtitle) searchSubtitle.textContent = 'Finding available service providers near you';
+
+            // Get REAL Mama Fua data from Firestore - NO SAMPLE DATA!
+            const mamaFuas = await this.getRegisteredMamaFuas(serviceType);
+            
+            // Display the REAL results
+            this.showRealMamaFuaResults(mamaFuas, serviceType);
+            
+        } catch (error) {
+            console.error('Error searching for Mama Fua:', error);
+            this.showErrorState();
+        }
     }
 
-    showMamaFuaResults() {
-        console.log('Showing Mama Fua results');
+    async getRegisteredMamaFuas(serviceType) {
+        try {
+            console.log('🔥 Fetching REAL Mama Fuas from Firestore for service:', serviceType);
+            
+            // Query users where userType is "mama-fua" using modular syntax
+            const usersRef = collection(db, 'users');
+            const q = query(usersRef, where('userType', '==', 'mama-fua'));
+            const querySnapshot = await getDocs(q);
+            
+            const mamaFuas = [];
+            
+            if (!querySnapshot.empty) {
+                querySnapshot.forEach((doc) => {
+                    const userData = doc.data();
+                    const userId = doc.id;
+                    
+                    console.log('✅ Found REAL Mama Fua:', userData.username);
+                    
+                    // Create Mama Fua object from REAL database data
+                    mamaFuas.push({
+                        id: userId,
+                        name: userData.username || 'Mama Fua',
+                        rating: userData.rating || 4.5,
+                        reviews: userData.reviews || 0,
+                        distance: `${(Math.random() * 2).toFixed(1)}km`,
+                        price: this.selectedPackage.price,
+                        service: serviceType,
+                        phone: userData.phone || '',
+                        experience: userData.experience || '1 year',
+                        image: userData.profileImage || null,
+                        email: userData.email,
+                        gender: userData.gender
+                    });
+                });
+            }
+            
+            console.log('🔥 TOTAL REAL Mama Fuas found:', mamaFuas.length);
+            
+            // Return ONLY real Mama Fuas - NO FALLBACK to sample data!
+            return mamaFuas;
+            
+        } catch (error) {
+            console.error('❌ Error fetching Mama Fuas from Firestore:', error);
+            // Return empty array instead of sample data
+            return [];
+        }
+    }
+
+    showRealMamaFuaResults(mamaFuas, serviceType) {
+        console.log('🔥 Showing REAL Mama Fua results:', mamaFuas);
         const resultsContainer = document.getElementById('mamaFuaResults');
         if (!resultsContainer) {
             console.error('Mama Fua results container not found');
@@ -267,40 +347,38 @@ class Dashboard {
 
         resultsContainer.innerHTML = '';
 
-        // Sample Mama Fua data
-        const mamaFuas = [
-            { 
-                name: "Sarah Wanjiku", 
-                rating: 4.8, 
-                reviews: 127, 
-                distance: "0.8km", 
-                price: this.selectedPackage.price,
-                service: this.selectedPackage.serviceType
-            },
-            { 
-                name: "Grace Akinyi", 
-                rating: 4.9, 
-                reviews: 203, 
-                distance: "1.2km", 
-                price: this.selectedPackage.price,
-                service: this.selectedPackage.serviceType
-            },
-            { 
-                name: "Mary Achieng", 
-                rating: 4.7, 
-                reviews: 89, 
-                distance: "0.5km", 
-                price: this.selectedPackage.price,
-                service: this.selectedPackage.serviceType
-            }
-        ];
+        if (mamaFuas.length === 0) {
+            resultsContainer.innerHTML = `
+                <div class="no-results">
+                    <i class="fas fa-search"></i>
+                    <h3>No Mama Fua Available</h3>
+                    <p>No service providers found for ${serviceType} in your area.</p>
+                    <button class="btn btn-primary" onclick="dashboard.switchScreen('packageScreen')">
+                        Try Another Service
+                    </button>
+                </div>
+            `;
+            
+            // Update search status for no results
+            const searchStatus = document.querySelector('.search-status h3');
+            const searchSubtitle = document.querySelector('.search-status p');
+            
+            if (searchStatus) searchStatus.textContent = 'No Mama Fuas Found';
+            if (searchSubtitle) searchSubtitle.textContent = 'Try again later or select a different service';
+            
+            return;
+        }
 
+        // Display REAL Mama Fuas from your database
         mamaFuas.forEach((mamaFua) => {
             const card = document.createElement('div');
             card.className = 'mama-fua-card';
             card.innerHTML = `
                 <div class="mama-fua-avatar">
-                    <i class="fas fa-user"></i>
+                    ${mamaFua.image ? 
+                        `<img src="${mamaFua.image}" alt="${mamaFua.name}" />` : 
+                        `<i class="fas fa-user"></i>`
+                    }
                 </div>
                 <div class="mama-fua-details">
                     <h4>${mamaFua.name}</h4>
@@ -310,6 +388,7 @@ class Dashboard {
                     </div>
                     <div class="mama-fua-rating">
                         <i class="fas fa-star"></i> ${mamaFua.rating}
+                        ${mamaFua.experience ? `<span class="experience">• ${mamaFua.experience} experience</span>` : ''}
                     </div>
                 </div>
                 <div class="mama-fua-price">
@@ -329,13 +408,35 @@ class Dashboard {
         const searchSubtitle = document.querySelector('.search-status p');
         
         if (searchStatus) searchStatus.textContent = 'Mama Fua Found!';
-        if (searchSubtitle) searchSubtitle.textContent = 'Select a Mama Fua to proceed with your request';
+        if (searchSubtitle) searchSubtitle.textContent = `Found ${mamaFuas.length} REAL service providers for ${serviceType}`;
         
-        console.log('Mama Fua results displayed');
+        console.log('✅ REAL Mama Fua results displayed');
+    }
+
+    showErrorState() {
+        const resultsContainer = document.getElementById('mamaFuaResults');
+        if (!resultsContainer) return;
+
+        resultsContainer.innerHTML = `
+            <div class="no-results">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Search Failed</h3>
+                <p>Unable to search for Mama Fua at the moment. Please try again.</p>
+                <button class="btn btn-primary" onclick="dashboard.searchMamaFua('${this.selectedPackage.serviceType}')">
+                    Retry Search
+                </button>
+            </div>
+        `;
+
+        const searchStatus = document.querySelector('.search-status h3');
+        const searchSubtitle = document.querySelector('.search-status p');
+        
+        if (searchStatus) searchStatus.textContent = 'Search Failed';
+        if (searchSubtitle) searchSubtitle.textContent = 'Please check your connection and try again';
     }
 
     confirmRequest(mamaFua) {
-        console.log('Confirming request with:', mamaFua.name);
+        console.log('Confirming request with REAL Mama Fua:', mamaFua.name);
         
         // Store selected mama fua
         this.selectedMamaFua = mamaFua;
@@ -509,11 +610,14 @@ class Dashboard {
     }
 }
 
+// Make dashboard globally accessible
+let dashboard;
+
 // Initialize dashboard when DOM is fully loaded
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM fully loaded, starting dashboard...');
     try {
-        new Dashboard();
+        dashboard = new Dashboard();
         console.log('Dashboard started successfully');
     } catch (error) {
         console.error('Error starting dashboard:', error);

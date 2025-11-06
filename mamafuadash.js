@@ -1,9 +1,16 @@
-// Mama Fua Dashboard JavaScript
+// Mama Fua Dashboard - FIXED VERSION
+console.log('✅ mamafuadash.js is loading!');
 
-// ✅ Load user from session storage
+// Check if Firebase is available
+console.log('Firebase available:', typeof firebase !== 'undefined');
+if (typeof firebase !== 'undefined') {
+    console.log('Firebase apps:', firebase.apps);
+}
+
+// Check session storage
 const mamaFuaData = JSON.parse(sessionStorage.getItem("fua_logged_user"));
+console.log('User data from session storage:', mamaFuaData);
 
-// If not logged in, redirect to login
 if (!mamaFuaData) {
     alert("Please login to access your dashboard.");
     window.location.href = "mainlog.html";
@@ -11,82 +18,89 @@ if (!mamaFuaData) {
 
 class MamaFuaDashboard {
     constructor() {
+        console.log('🚀 Dashboard constructor called');
         this.currentScreen = 'onlineScreen';
         this.isOnline = true;
-        this.activeRequest = null;
-        this.serviceTimer = null;
-        this.serviceStartTime = null;
         this.init();
     }
 
     init() {
-        console.log('Mama Fua Dashboard initializing...');
-        this.updateUserInfo();
+        console.log('🔧 Initializing dashboard...');
+        this.updateUserInfo(); // ADDED THIS LINE - Update user info first!
         this.initializeEventListeners();
-        this.loadSampleData();
-        console.log('Mama Fua Dashboard initialized successfully');
+        console.log('✅ Dashboard initialized');
     }
 
+    // ADDED THIS METHOD - Update user information throughout the dashboard
     updateUserInfo() {
-        // ✅ Update user information throughout the dashboard
-        const userName = mamaFuaData?.username || "Mama Fua";
+        console.log('👤 Updating user info...');
         
-        // Update sidebar profile
+        // Get the username from session storage - try different possible fields
+        const userName = mamaFuaData?.username || mamaFuaData?.name || "Mama Fua";
+        console.log('Display name:', userName);
+        
+        // Update sidebar profile name
         const sidebarName = document.querySelector(".profile-info h3");
-        if (sidebarName) sidebarName.textContent = userName;
+        if (sidebarName) {
+            sidebarName.textContent = userName;
+            console.log('✅ Sidebar name updated:', userName);
+        } else {
+            console.log('❌ Sidebar name element not found');
+        }
         
-        // Update profile screen
+        // Update profile screen name
         const profileName = document.querySelector(".profile-details .detail-value");
-        if (profileName) profileName.textContent = userName;
+        if (profileName) {
+            profileName.textContent = userName;
+            console.log('✅ Profile name updated:', userName);
+        }
         
         // Update card holder name
         const cardHolder = document.querySelector(".card-holder div");
-        if (cardHolder) cardHolder.textContent = userName.toUpperCase();
+        if (cardHolder) {
+            cardHolder.textContent = userName.toUpperCase();
+            console.log('✅ Card holder updated:', userName.toUpperCase());
+        }
         
-        console.log('User info updated:', userName);
+        // Update phone number if available
+        const userPhone = mamaFuaData?.phone || "";
+        const phoneElement = document.querySelector(".profile-details .detail-value:nth-child(2)");
+        if (phoneElement && userPhone) {
+            phoneElement.textContent = userPhone;
+            console.log('✅ Phone number updated:', userPhone);
+        }
     }
 
     initializeEventListeners() {
-        console.log('Setting up event listeners...');
-
-        // Menu toggle
+        console.log('🔗 Setting up event listeners...');
+        
+        // Test basic button
         const menuBtn = document.getElementById('menuBtn');
-        const closeBtn = document.getElementById('closeMenu');
-        
+        console.log('Menu button found:', menuBtn);
         if (menuBtn) {
-            menuBtn.addEventListener('click', () => this.toggleMenu());
-        }
-        
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => this.toggleMenu());
+            menuBtn.addEventListener('click', () => {
+                console.log('🎯 Menu button clicked!');
+                this.toggleMenu();
+            });
         }
 
-        // Online/Offline toggle
+        // Online toggle
         const onlineToggle = document.getElementById('onlineToggle');
+        console.log('Online toggle found:', onlineToggle);
         if (onlineToggle) {
             onlineToggle.addEventListener('change', (e) => {
+                console.log('🎯 Online toggle changed:', e.target.checked);
                 this.toggleOnlineStatus(e.target.checked);
             });
         }
 
-        // Go Offline button
-        const goOfflineBtn = document.getElementById('goOfflineBtn');
-        if (goOfflineBtn) {
-            goOfflineBtn.addEventListener('click', () => {
-                if (confirm('Are you sure you want to go offline?')) {
-                    this.goOffline();
-                }
-            });
-        }
-
-        // ✅ Logout functionality
-        this.initializeLogoutEvents();
-
         // Bottom navigation
         const navItems = document.querySelectorAll('.nav-item');
+        console.log('Nav items found:', navItems.length);
         navItems.forEach(item => {
             item.addEventListener('click', (e) => {
                 const screen = e.currentTarget.getAttribute('data-screen');
+                console.log('🎯 Navigation clicked:', screen);
                 this.switchScreen(screen);
                 
                 // Update active state
@@ -97,65 +111,38 @@ class MamaFuaDashboard {
 
         // Back buttons
         const backButtons = document.querySelectorAll('.back-btn');
+        console.log('Back buttons found:', backButtons.length);
         backButtons.forEach(btn => {
             btn.addEventListener('click', () => {
+                console.log('🎯 Back button clicked');
                 this.switchScreen('onlineScreen');
             });
         });
 
-        // Wallet functionality
-        this.initializeWalletEvents();
+        // Logout functionality
+        this.initializeLogoutEvents();
 
-        // Request functionality
-        this.initializeRequestEvents();
-
-        // Simulate incoming request (for demo)
-        this.simulateIncomingRequest();
-
-        console.log('All event listeners set up successfully');
+        console.log('✅ All event listeners set up');
     }
 
+    // ADDED THIS METHOD - Handle logout
     initializeLogoutEvents() {
-        // ✅ Create logout button in the side menu
-        const logoutButton = document.createElement('div');
-        logoutButton.className = 'menu-item logout';
-        logoutButton.id = 'logoutBtn';
-        logoutButton.innerHTML = `
-            <i class="fas fa-sign-out-alt"></i>
-            <span>Logout</span>
-        `;
-
-        // Add logout button to the menu items
-        const menuItems = document.querySelector('.menu-items');
-        if (menuItems) {
-            menuItems.appendChild(logoutButton);
-        }
-
-        // Add event listener for logout
-        logoutButton.addEventListener('click', () => {
-            this.logout();
-        });
-
-        // ✅ Also add logout option to profile screen
-        const profileActions = document.querySelector('.profile-actions');
-        if (profileActions) {
-            const logoutProfileBtn = document.createElement('button');
-            logoutProfileBtn.className = 'btn btn-secondary';
-            logoutProfileBtn.id = 'logoutProfileBtn';
-            logoutProfileBtn.innerHTML = `
-                <i class="fas fa-sign-out-alt"></i>
-                Logout
-            `;
-            profileActions.appendChild(logoutProfileBtn);
-
-            logoutProfileBtn.addEventListener('click', () => {
+        const logoutBtn = document.getElementById('logoutBtn');
+        console.log('Logout button found:', logoutBtn);
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                console.log('🎯 Logout button clicked');
                 this.logout();
             });
         }
     }
 
+    // ADDED THIS METHOD - Handle logout
     logout() {
         if (confirm('Are you sure you want to logout?')) {
+            // Set offline status when logging out
+            this.saveOnlineStatusToFirestore(false);
+            
             // Clear session storage
             sessionStorage.removeItem("fua_logged_user");
             
@@ -167,131 +154,86 @@ class MamaFuaDashboard {
         }
     }
 
-    initializeWalletEvents() {
-        const withdrawBtn = document.getElementById('withdrawSubmit');
-        const cancelWithdrawal = document.getElementById('cancelWithdrawal');
-        const confirmWithdrawal = document.getElementById('confirmWithdrawal');
-        const closeSuccess = document.getElementById('closeSuccess');
-
-        if (withdrawBtn) {
-            withdrawBtn.addEventListener('click', () => {
-                this.processWithdrawal();
-            });
-        }
-
-        if (cancelWithdrawal) {
-            cancelWithdrawal.addEventListener('click', () => {
-                this.closeModal('withdrawalModal');
-            });
-        }
-
-        if (confirmWithdrawal) {
-            confirmWithdrawal.addEventListener('click', () => {
-                this.confirmWithdrawal();
-            });
-        }
-
-        if (closeSuccess) {
-            closeSuccess.addEventListener('click', () => {
-                this.closeModal('successModal');
-            });
-        }
-
-        // Close modals when clicking X
-        const closeModalButtons = document.querySelectorAll('.close-modal');
-        closeModalButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const modal = e.target.closest('.modal');
-                if (modal) {
-                    modal.style.display = 'none';
-                }
-            });
-        });
-    }
-
-    initializeRequestEvents() {
-        // Accept request
-        const acceptBtn = document.getElementById('acceptBtn');
-        if (acceptBtn) {
-            acceptBtn.addEventListener('click', () => {
-                this.acceptRequest();
-            });
-        }
-
-        // Decline request
-        const declineBtn = document.getElementById('declineBtn');
-        if (declineBtn) {
-            declineBtn.addEventListener('click', () => {
-                this.declineRequest();
-            });
-        }
-
-        // Arrived button
-        const arrivedBtn = document.getElementById('arrivedBtn');
-        if (arrivedBtn) {
-            arrivedBtn.addEventListener('click', () => {
-                this.startService();
-            });
-        }
-
-        // Complete service
-        const completeBtn = document.getElementById('completeServiceBtn');
-        if (completeBtn) {
-            completeBtn.addEventListener('click', () => {
-                this.completeService();
-            });
-        }
-
-        // Call and message buttons
-        const callClientBtn = document.getElementById('callClientBtn');
-        const messageClientBtn = document.getElementById('messageClientBtn');
-
-        if (callClientBtn) {
-            callClientBtn.addEventListener('click', () => {
-                alert('Calling client...');
-            });
-        }
-
-        if (messageClientBtn) {
-            messageClientBtn.addEventListener('click', () => {
-                alert('Opening chat with client...');
-            });
-        }
-    }
-
     toggleMenu() {
+        console.log('📱 Toggling menu');
         const sideMenu = document.getElementById('sideMenu');
         if (sideMenu) {
             sideMenu.classList.toggle('active');
+            console.log('Menu toggled, active:', sideMenu.classList.contains('active'));
         }
     }
 
     toggleOnlineStatus(isOnline) {
+        console.log('🌐 Toggling online status to:', isOnline);
         this.isOnline = isOnline;
+        
+        // Update UI
         const statusIndicator = document.getElementById('statusIndicator');
         const statusText = document.getElementById('statusText');
         
         if (isOnline) {
-            statusIndicator.className = 'status-indicator online';
-            statusText.textContent = 'Online';
-            console.log('Mama Fua is now online');
+            if (statusIndicator) {
+                statusIndicator.className = 'status-indicator online';
+                console.log('✅ Status indicator set to online');
+            }
+            if (statusText) {
+                statusText.textContent = 'Online';
+                console.log('✅ Status text set to Online');
+            }
         } else {
-            statusIndicator.className = 'status-indicator offline';
-            statusText.textContent = 'Offline';
-            console.log('Mama Fua is now offline');
+            if (statusIndicator) {
+                statusIndicator.className = 'status-indicator offline';
+                console.log('✅ Status indicator set to offline');
+            }
+            if (statusText) {
+                statusText.textContent = 'Offline';
+                console.log('✅ Status text set to Offline');
+            }
         }
+        
+        // Try to save to Firebase (but don't block if it fails)
+        this.saveOnlineStatusToFirestore(isOnline);
     }
 
-    goOffline() {
-        const onlineToggle = document.getElementById('onlineToggle');
-        if (onlineToggle) {
-            onlineToggle.checked = false;
-            this.toggleOnlineStatus(false);
+    async saveOnlineStatusToFirestore(isOnline) {
+        try {
+            console.log('🔥 Attempting to save to Firestore...');
+            
+            if (typeof firebase === 'undefined') {
+                console.log('❌ Firebase not loaded');
+                return;
+            }
+
+            const db = firebase.firestore();
+            console.log('✅ Firestore instance created');
+            
+            // Find user by email
+            const snapshot = await db.collection('users')
+                .where('email', '==', mamaFuaData.email)
+                .limit(1)
+                .get();
+            
+            console.log('✅ User query completed, found:', !snapshot.empty);
+            
+            if (!snapshot.empty) {
+                snapshot.forEach(async (doc) => {
+                    await db.collection('users').doc(doc.id).update({
+                        isOnline: isOnline,
+                        lastOnlineUpdate: new Date()
+                    });
+                    console.log('✅ Online status saved to Firestore for user:', doc.id);
+                });
+            } else {
+                console.log('❌ No user found with email:', mamaFuaData.email);
+            }
+        } catch (error) {
+            console.error('❌ Error saving to Firestore:', error);
         }
-        this.toggleMenu();
     }
 
     switchScreen(screenName) {
+        console.log('🔄 Switching to screen:', screenName);
+        
         // Hide all screens
         const screens = document.querySelectorAll('.screen');
         screens.forEach(screen => {
@@ -303,262 +245,15 @@ class MamaFuaDashboard {
         if (targetScreen) {
             targetScreen.classList.add('active');
             this.currentScreen = screenName;
+            console.log('✅ Screen switched to:', screenName);
+        } else {
+            console.log('❌ Screen not found:', screenName);
         }
-    }
-
-    processWithdrawal() {
-        const phoneNumber = document.getElementById('phoneNumber').value;
-        const amount = document.getElementById('amount').value;
-
-        if (!phoneNumber || !amount) {
-            alert('Please fill in all fields');
-            return;
-        }
-
-        if (phoneNumber.length !== 10) {
-            alert('Please enter a valid 10-digit M-Pesa number');
-            return;
-        }
-
-        const amountNum = parseInt(amount);
-        if (amountNum < 100) {
-            alert('Minimum withdrawal amount is KSh 100');
-            return;
-        }
-
-        // Calculate fees
-        const fee = amountNum * 0.025;
-        const netAmount = amountNum - fee;
-
-        // Update confirmation modal
-        document.getElementById('confirmAmount').textContent = `KSh ${amountNum.toLocaleString()}`;
-        document.getElementById('confirmPhone').textContent = phoneNumber;
-        document.getElementById('confirmFee').textContent = `KSh ${fee.toLocaleString()}`;
-        document.getElementById('confirmNet').textContent = `KSh ${netAmount.toLocaleString()}`;
-
-        // Show confirmation modal
-        this.showModal('withdrawalModal');
-    }
-
-    confirmWithdrawal() {
-        const amount = document.getElementById('amount').value;
-        const phoneNumber = document.getElementById('phoneNumber').value;
-
-        // Simulate API call
-        setTimeout(() => {
-            this.closeModal('withdrawalModal');
-            
-            // Update success modal
-            document.getElementById('successAmount').textContent = `KSh ${parseInt(amount).toLocaleString()}`;
-            this.showModal('successModal');
-            
-            // Reset form
-            document.getElementById('phoneNumber').value = '';
-            document.getElementById('amount').value = '';
-            
-            // Add to transaction history
-            this.addTransaction('withdrawal', parseInt(amount), phoneNumber);
-            
-        }, 2000);
-    }
-
-    addTransaction(type, amount, phoneNumber) {
-        const transactionList = document.querySelector('.transaction-list');
-        const transactionItem = document.createElement('div');
-        transactionItem.className = 'transaction-item';
-        
-        const isWithdrawal = type === 'withdrawal';
-        const transactionType = isWithdrawal ? 'M-Pesa Withdrawal' : 'Service Payment';
-        const iconClass = isWithdrawal ? 'withdrawal' : 'earning';
-        const amountClass = isWithdrawal ? 'negative' : 'positive';
-        const amountPrefix = isWithdrawal ? '-' : '+';
-        
-        transactionItem.innerHTML = `
-            <div class="transaction-info">
-                <div class="transaction-icon ${iconClass}">
-                    <i class="fas ${isWithdrawal ? 'fa-mobile-alt' : 'fa-hand-holding-usd'}"></i>
-                </div>
-                <div class="transaction-details">
-                    <h4>${transactionType}</h4>
-                    <p>Just now</p>
-                </div>
-            </div>
-            <div class="transaction-amount ${amountClass}">${amountPrefix} KSh ${amount.toLocaleString()}</div>
-        `;
-
-        transactionList.insertBefore(transactionItem, transactionList.firstChild);
-    }
-
-    showModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.style.display = 'flex';
-        }
-    }
-
-    closeModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.style.display = 'none';
-        }
-    }
-
-    simulateIncomingRequest() {
-        // Simulate incoming request after 5 seconds
-        setTimeout(() => {
-            if (this.isOnline && !this.activeRequest) {
-                this.showIncomingRequest();
-            }
-        }, 5000);
-    }
-
-    showIncomingRequest() {
-        const floatingBadge = document.getElementById('floatingRequest');
-        if (floatingBadge) {
-            floatingBadge.style.display = 'flex';
-            
-            floatingBadge.addEventListener('click', () => {
-                this.displayRequestDetails();
-                floatingBadge.style.display = 'none';
-            });
-        }
-    }
-
-    displayRequestDetails() {
-        // Sample request data
-        this.activeRequest = {
-            clientName: "John Doe",
-            serviceType: "Full House Cleaning",
-            price: "2,000",
-            distance: "1.2 km",
-            address: "Westlands, Nairobi",
-            estimatedTime: "3-4 hours"
-        };
-
-        // Update request screen with actual data
-        document.getElementById('clientName').textContent = this.activeRequest.clientName;
-        document.getElementById('serviceType').textContent = this.activeRequest.serviceType;
-        document.getElementById('servicePrice').textContent = `KSh ${this.activeRequest.price}`;
-        document.getElementById('clientDistance').textContent = `${this.activeRequest.distance} away`;
-        document.getElementById('clientAddress').textContent = this.activeRequest.address;
-
-        // Switch to request screen
-        this.switchScreen('requestScreen');
-    }
-
-    acceptRequest() {
-        console.log('Request accepted');
-        
-        // Update onway screen with request details
-        document.getElementById('onwayClientName').textContent = this.activeRequest.clientName;
-        document.getElementById('onwayServiceType').textContent = this.activeRequest.serviceType;
-        document.getElementById('onwayAddress').textContent = this.activeRequest.address;
-        
-        this.switchScreen('onwayScreen');
-        
-        // Start ETA simulation
-        this.simulateETA();
-    }
-
-    declineRequest() {
-        console.log('Request declined');
-        this.activeRequest = null;
-        this.switchScreen('onlineScreen');
-        
-        // Simulate another request after some time
-        setTimeout(() => {
-            this.simulateIncomingRequest();
-        }, 10000);
-    }
-
-    simulateETA() {
-        let timeLeft = 15; // minutes
-        const etaElement = document.getElementById('etaTime');
-        
-        const countdown = setInterval(() => {
-            if (timeLeft > 0) {
-                timeLeft--;
-                if (etaElement) {
-                    etaElement.textContent = `${timeLeft} min`;
-                }
-            } else {
-                clearInterval(countdown);
-                if (etaElement) {
-                    etaElement.textContent = 'Arriving now';
-                }
-            }
-        }, 1000); // Update every second (for demo)
-    }
-
-    startService() {
-        // Update service screen
-        document.getElementById('serviceClientName').textContent = this.activeRequest.clientName;
-        document.getElementById('serviceServiceType').textContent = this.activeRequest.serviceType;
-        document.getElementById('serviceAddress').textContent = this.activeRequest.address;
-        
-        this.switchScreen('serviceScreen');
-        
-        // Start service timer
-        this.startServiceTimer();
-        
-        // Update progress step
-        const serviceStep = document.getElementById('serviceStep');
-        if (serviceStep) {
-            serviceStep.classList.add('active');
-        }
-    }
-
-    startServiceTimer() {
-        this.serviceStartTime = new Date();
-        this.serviceTimer = setInterval(() => {
-            const now = new Date();
-            const diff = now - this.serviceStartTime;
-            const minutes = Math.floor(diff / 60000);
-            const seconds = Math.floor((diff % 60000) / 1000);
-            
-            const timerElement = document.getElementById('serviceTimer');
-            if (timerElement) {
-                timerElement.textContent = 
-                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            }
-        }, 1000);
-    }
-
-    completeService() {
-        // Stop timer
-        if (this.serviceTimer) {
-            clearInterval(this.serviceTimer);
-        }
-        
-        // Add to earnings
-        this.addTransaction('earning', 2000); // Sample amount
-        
-        // Show completion message
-        alert('Service marked as complete! Payment of KSh 2,000 has been added to your wallet.');
-        
-        // Reset
-        this.activeRequest = null;
-        this.switchScreen('onlineScreen');
-        
-        // Simulate another request
-        setTimeout(() => {
-            this.simulateIncomingRequest();
-        }, 8000);
-    }
-
-    loadSampleData() {
-        // Sample data is already in HTML, this method can be expanded
-        console.log('Sample data loaded');
     }
 }
 
-// Initialize dashboard when DOM is fully loaded
+// Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM fully loaded, starting Mama Fua dashboard...');
-    try {
-        new MamaFuaDashboard();
-        console.log('Mama Fua Dashboard started successfully');
-    } catch (error) {
-        console.error('Error starting Mama Fua dashboard:', error);
-    }
+    console.log('🎉 DOM fully loaded, starting dashboard...');
+    window.mamaFuaDashboard = new MamaFuaDashboard();
 });
